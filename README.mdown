@@ -1,0 +1,11 @@
+RetroQuest
+==========
+
+RetroQuest is an attempt to rebuild the magic of EverQuest with the technologies of today.
+
+Next steps
+----------
+
+* Attacked mob auto-attacks back after first hit.
+* Can kill a mob.
+* Mob can kill you.
