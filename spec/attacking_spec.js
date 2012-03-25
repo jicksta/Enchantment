@@ -1,7 +1,7 @@
 describe("Attacking", function() {
   it("should do the damage of the player's weapon each tick", function() {
-    var world = new engine.World;
-    var player = new engine.Player(world);
+    var world = new rq.World;
+    var player = new rq.Player(world);
     var dmg = player.attackDamage()
     expect(dmg).toBeGreaterThan(0);
     var target = world.zones[0].orc;

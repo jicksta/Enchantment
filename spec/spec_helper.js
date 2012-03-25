@@ -1,1 +1,1 @@
-global.engine = require("../engine.js");
+global.rq = require("../src/engine.js");
