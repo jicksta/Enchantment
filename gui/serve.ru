@@ -1,1 +1,0 @@
-run Rack::File.new(".")
