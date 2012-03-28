@@ -15,14 +15,15 @@
 	</head>
 	<body>
 		<script src="./Three.js"></script>
-
-		<script src="./jiglibjs.0.9.0.2.combined.js"></script>
+		<script src="./physijs/physi.js"></script>
 		<script src="./Detector.js"></script>
 		<script src="./Stats.js"></script>
 
 		<script>
-
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+      Physijs.scripts.worker = '/physijs/physijs_worker.js';
+      Physijs.scripts.ammo = '/ammojs/builds/ammo.js';
 
 			var container, stats;
 
@@ -50,7 +51,7 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				scene = new THREE.Scene();
+				scene = new Physijs.Scene;
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
 				camera.position.set( 2, 2, 3 );
@@ -109,20 +110,7 @@
 
         // Physics
 
-        var physics = jigLib.PhysicsSystem.getInstance();
-        physics.setGravity([0, -9.8, 0, 0]);
-        var ground = new jigLib.JPlane(null, [0, 1, 0, 0]);
-        ground.set_friction(0);
-        physics.addBody(ground);
-
-        var physicalPlayer = new jigLib.JSphere(null, 20);
-        physicalPlayer.set_x(2);
-        physicalPlayer.set_y(20);
-        physicalPlayer.set_z(10);
-        physicalPlayer.set_mass(20);
-        physicalPlayer.set_friction(0);
-
-        physics.addBody(physicalPlayer);
+        scene.setGravity({ x: 0, y: -10, z: 0 });
 
       }
 
