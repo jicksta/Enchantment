@@ -16,6 +16,7 @@
 	<body>
 		<script src="./Three.js"></script>
 
+		<script src="./jiglibjs.0.9.0.2.combined.js"></script>
 		<script src="./Detector.js"></script>
 		<script src="./Stats.js"></script>
 
@@ -42,7 +43,7 @@
 				init();
 				animate();
 
-			} );
+			});
 
 			function init() {
 
@@ -104,11 +105,28 @@
 				stats = new Stats();
 				stats.domElement.style.position = 'absolute';
 				stats.domElement.style.top = '0px';
-				container.appendChild( stats.domElement );
+        container.appendChild(stats.domElement);
 
-			}
+        // Physics
 
-			//
+        var physics = jigLib.PhysicsSystem.getInstance();
+        physics.setGravity([0, -9.8, 0, 0]);
+        var ground = new jigLib.JPlane(null, [0, 1, 0, 0]);
+        ground.set_friction(0);
+        physics.addBody(ground);
+
+        var physicalPlayer = new jigLib.JSphere(null, 20);
+        physicalPlayer.set_x(2);
+        physicalPlayer.set_y(20);
+        physicalPlayer.set_z(10);
+        physicalPlayer.set_mass(20);
+        physicalPlayer.set_friction(0);
+
+        physics.addBody(physicalPlayer);
+
+      }
+
+      //
 
 			var t = 0;
 			function animate() {
