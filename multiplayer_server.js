@@ -23,28 +23,38 @@ io.sockets.on("connection", function(socket) {
 
 
 function Game() {
-  var players = [];
+  var self = this;
+
+  var players = {};
   var playerSockets = {};
 
   this.playerConnected = function(socket) {
     socket.emit("world", players);
     socket.on("create", function(playerData) {
       game.addPlayer(playerData, socket);
+      socket.on("disconnect", function() {
+        self.playerLeft(playerData.id);
+      });
     });
   };
 
   this.addPlayer = function(playerData, socket) {
-    players.push(playerData);
+    players[playerData.id] = playerData;
     playerSockets[playerData.id] = socket;
   };
 
+  this.playerLeft = function(playerID) {
+    delete players[playerID];
+    delete playerSockets[playerID];
+    io.sockets.emit("left", playerID);
+  };
+
   this.movePlayer = function(playerData) {
-    for (var i in players) {
-      var thisPlayer = players[i];
-      if (thisPlayer.id == playerData.id) {
-        _.extend(thisPlayer, playerData);
+    for (var playerID in players) {
+      if (playerID == playerData.id) {
+        _.extend(players[playerID], playerData);
       } else {
-        var thisPlayerSocket = playerSockets[thisPlayer.id];
+        var thisPlayerSocket = playerSockets[playerID];
         thisPlayerSocket.emit("update", playerData);
       }
     }

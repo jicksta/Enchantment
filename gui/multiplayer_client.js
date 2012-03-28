@@ -13,10 +13,14 @@ $(function() {
 
   var socket = io.connect("http://localhost");
 
+  socket.on("left", function(playerID) {
+    playerElements[playerID].remove()
+    delete otherPlayers[playerID];
+    delete playerElements[playerID];
+  });
+
   socket.on("world", function(world) {
-    otherPlayers = $.each(world, function(p) {
-      otherPlayers[p.id] = p;
-    });
+    otherPlayers = world;
 
     console.log(world);
     player = createPlayer();
@@ -78,7 +82,7 @@ $(function() {
   }
 
   function random(n) {
-    return Math.random() * random
+    return Math.random() * n
   }
 
 });
