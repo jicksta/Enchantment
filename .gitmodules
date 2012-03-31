@@ -1,6 +1,3 @@
-[submodule "gui/physijs"]
-	path = gui/physijs
-	url = https://github.com/chandlerprall/Physijs.git
-[submodule "gui/ammojs"]
-	path = gui/ammojs
-	url = https://github.com/kripken/ammo.js.git
+[submodule "gui/jiglibjs2"]
+	path = gui/jiglibjs2
+	url = https://github.com/bartdeboer/JigLibJS2.git

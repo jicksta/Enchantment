@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<title>three.js webgl - collada</title>
+		<title>Collada-loaded scene with physics</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
@@ -14,6 +14,7 @@
 		</style>
 	</head>
 	<body>
+		<script src="./underscore.js"></script>
 		<script src="./Three.js"></script>
 		<script src="./physijs/physi.js"></script>
 		<script src="./Detector.js"></script>
@@ -31,6 +32,8 @@
 			var particleLight, pointLight;
 			var dae, skin;
 
+      var spheres;
+
 			var loader = new THREE.ColladaLoader();
 			loader.options.convertUpAxis = true;
 			loader.load('building.dae', function colladaReady( collada ) {
@@ -40,6 +43,8 @@
 
 				dae.scale.x = dae.scale.y = dae.scale.z = 0.002;
 				dae.updateMatrix();
+
+        console.log(dae);
 
 				init();
 				animate();
@@ -52,6 +57,7 @@
 				document.body.appendChild( container );
 
 				scene = new Physijs.Scene;
+        scene.setGravity({ x: 0, y: -10, z: 0 });
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
 				camera.position.set( 2, 2, 3 );
@@ -59,31 +65,36 @@
 
 				// Grid
 
-				var line_material = new THREE.LineBasicMaterial( { color: 0xcccccc, opacity: 0.2 } ),
-					geometry = new THREE.Geometry(),
-					floor = -0.04, step = 1, size = 14;
+//				var line_material = new THREE.LineBasicMaterial( { color: 0xCCCCCC, opacity: 0.2 } ),
+//					geometry = new THREE.Geometry(),
+//					floor = -0.04, step = 1, size = 14;
+//
+//				for ( var i = 0; i <= size / step * 2; i ++) {
+//
+//					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( - size, floor, i * step - size ) ) );
+//					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3(   size, floor, i * step - size ) ) );
+//
+//					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( i * step - size, floor, -size ) ) );
+//					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( i * step - size, floor,  size ) ) );
+//
+//				}
+//				var line = new THREE.Line( geometry, line_material, THREE.LinePieces );
+//				scene.add( line );
 
-				for ( var i = 0; i <= size / step * 2; i ++ ) {
-
-					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( - size, floor, i * step - size ) ) );
-					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3(   size, floor, i * step - size ) ) );
-
-					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( i * step - size, floor, -size ) ) );
-					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( i * step - size, floor,  size ) ) );
-
-				}
-
-				var line = new THREE.Line( geometry, line_material, THREE.LinePieces );
-				scene.add( line );
-
-				// Add the COLLADA
-
-				scene.add( dae );
-
-				particleLight = new THREE.Mesh( new THREE.SphereGeometry( 4, 8, 8 ), new THREE.MeshBasicMaterial( { color: 0xffffff } ) );
-				scene.add( particleLight );
+        // Ball physics test
+        spheres = _.map([15, 0], function(x) {
+          var sphereMaterial = new THREE.MeshLambertMaterial({color:0x00FF00});
+          var radius = 1, segments = 16, rings = 16;
+          var sphere = new Physijs.SphereMesh(new THREE.SphereGeometry(radius, segments, rings), sphereMaterial);
+          _.extend(sphere.position, {x:x, y:3, z:0});
+          scene.add(sphere);
+          return sphere;
+        });
 
 				// Lights
+
+        particleLight = new THREE.Mesh( new THREE.SphereGeometry( 4, 8, 8 ), new THREE.MeshBasicMaterial({color: 0xffffff}) );
+        scene.add( particleLight );
 
 				scene.add( new THREE.AmbientLight( 0xcccccc ) );
 
@@ -108,17 +119,16 @@
 				stats.domElement.style.top = '0px';
         container.appendChild(stats.domElement);
 
-        // Physics
-
-        scene.setGravity({ x: 0, y: -10, z: 0 });
-
+				// Add the COLLADA
+				scene.addFromCollada(dae, new THREE.Vector3(50, 50, 50));
+//				scene.add(dae);
       }
 
       //
 
 			var t = 0;
 			function animate() {
-
+        scene.simulate(undefined, 2);
 				requestAnimationFrame( animate );
 
 				if ( t > 30 ) t = 0;
@@ -146,16 +156,15 @@
 
 				render();
 				stats.update();
-
 			}
 
 			function render() {
 
 				var timer = Date.now() * 0.0005;
 
-				camera.position.x = Math.cos( timer ) * 10;
+				camera.position.x = Math.sin( timer ) * 10;
 				camera.position.y = 2;
-				camera.position.z = Math.sin( timer ) * 10;
+				camera.position.z = Math.cos( timer ) * 10;
 
 				camera.lookAt( scene.position );
 
