@@ -1,181 +1,91 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<title>Collada-loaded scene with physics</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<style>
-			body {
-				font-family: Monospace;
-				background-color: #000000;
-				margin: 0px;
-				overflow: hidden;
-			}
-		</style>
-	</head>
-	<body>
-		<script src="./underscore.js"></script>
-		<script src="./Three.js"></script>
-		<script src="./physijs/physi.js"></script>
-		<script src="./Detector.js"></script>
-		<script src="./Stats.js"></script>
+<html>
+<head>
+  <script src="/socket.io/socket.io.js" type="text/javascript"></script>
 
-		<script>
-			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+  <script src="./vendor/underscore.js" type="text/javascript"></script>
+  <script src="./vendor/jquery-1.7.2.js" type="text/javascript"></script>
+  <script src="./vendor/Three.js"></script>
+  <script src="./vendor/Stats.js"></script>
 
-      Physijs.scripts.worker = '/physijs/physijs_worker.js';
-      Physijs.scripts.ammo = '/ammojs/builds/ammo.js';
+  <script type="text/javascript" src="./vendor/jiglibjs2/geom/glMatrix.js"></script>
 
-			var container, stats;
+  <script type="text/javascript" src="./vendor/jiglibjs2/jiglib.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geom/Vector3D.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geom/Matrix3D.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/math/JMatrix3D.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/math/JMath3D.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/math/JNumber3D.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/cof/JConfig.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/data/CollOutData.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/data/ContactData.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/data/PlaneData.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/data/EdgeData.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/data/TerrainData.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JAABox.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/data/OctreeCell.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/data/CollOutBodyData.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/data/TriangleVertexIndices.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/data/SpanData.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/constraint/JConstraint.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/constraint/JConstraintMaxDistance.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/constraint/JConstraintWorldPoint.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/constraint/JConstraintPoint.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/MaterialProperties.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JTriangle.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JSegment.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollPointInfo.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollisionInfo.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectInfo.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectFunctor.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectBoxTerrain.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectSphereMesh.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectCapsuleBox.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectSphereCapsule.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectCapsuleTerrain.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectSphereBox.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectSphereTerrain.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectBoxBox.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectBoxMesh.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectBoxPlane.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectCapsuleCapsule.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectSphereSphere.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectSpherePlane.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollDetectCapsulePlane.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollisionSystemAbstract.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollisionSystemGridEntry.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollisionSystemGrid.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/collision/CollisionSystemBrute.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JIndexedTriangle.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JOctree.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JRay.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/events/JCollisionEvent.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/constraint/JConstraint.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/constraint/JConstraintMaxDistance.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/constraint/JConstraintWorldPoint.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/constraint/JConstraintPoint.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/PhysicsController.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/CachedImpulse.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/HingeJoint.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/BodyPair.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/PhysicsState.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/PhysicsSystem.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/physics/RigidBody.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JSphere.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JTriangleMesh.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JPlane.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JTerrain.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JBox.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/geometry/JCapsule.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/debug/Stats.js"></script>
 
-			var camera, scene, renderer, objects;
-			var particleLight, pointLight;
-			var dae, skin;
+  <script type="text/javascript" src="./vendor/jiglibjs2/vehicles/JChassis.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/vehicles/JWheel.js"></script>
+  <script type="text/javascript" src="./vendor/jiglibjs2/vehicles/JCar.js"></script>
 
-      var spheres;
-
-			var loader = new THREE.ColladaLoader();
-			loader.options.convertUpAxis = true;
-			loader.load('building.dae', function colladaReady( collada ) {
-
-				dae = collada.scene;
-				skin = collada.skins[ 0 ];
-
-				dae.scale.x = dae.scale.y = dae.scale.z = 0.002;
-				dae.updateMatrix();
-
-        console.log(dae);
-
-				init();
-				animate();
-
-			});
-
-			function init() {
-
-				container = document.createElement( 'div' );
-				document.body.appendChild( container );
-
-				scene = new Physijs.Scene;
-        scene.setGravity({ x: 0, y: -10, z: 0 });
-
-				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-				camera.position.set( 2, 2, 3 );
-				scene.add( camera );
-
-				// Grid
-
-//				var line_material = new THREE.LineBasicMaterial( { color: 0xCCCCCC, opacity: 0.2 } ),
-//					geometry = new THREE.Geometry(),
-//					floor = -0.04, step = 1, size = 14;
-//
-//				for ( var i = 0; i <= size / step * 2; i ++) {
-//
-//					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( - size, floor, i * step - size ) ) );
-//					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3(   size, floor, i * step - size ) ) );
-//
-//					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( i * step - size, floor, -size ) ) );
-//					geometry.vertices.push( new THREE.Vertex( new THREE.Vector3( i * step - size, floor,  size ) ) );
-//
-//				}
-//				var line = new THREE.Line( geometry, line_material, THREE.LinePieces );
-//				scene.add( line );
-
-        // Ball physics test
-        spheres = _.map([15, 0], function(x) {
-          var sphereMaterial = new THREE.MeshLambertMaterial({color:0x00FF00});
-          var radius = 1, segments = 16, rings = 16;
-          var sphere = new Physijs.SphereMesh(new THREE.SphereGeometry(radius, segments, rings), sphereMaterial);
-          _.extend(sphere.position, {x:x, y:3, z:0});
-          scene.add(sphere);
-          return sphere;
-        });
-
-				// Lights
-
-        particleLight = new THREE.Mesh( new THREE.SphereGeometry( 4, 8, 8 ), new THREE.MeshBasicMaterial({color: 0xffffff}) );
-        scene.add( particleLight );
-
-				scene.add( new THREE.AmbientLight( 0xcccccc ) );
-
-				var directionalLight = new THREE.DirectionalLight(/*Math.random() * 0xffffff*/0xeeeeee );
-				directionalLight.position.x = Math.random() - 0.5;
-				directionalLight.position.y = Math.random() - 0.5;
-				directionalLight.position.z = Math.random() - 0.5;
-				directionalLight.position.normalize();
-				scene.add( directionalLight );
-
-				pointLight = new THREE.PointLight( 0xffffff, 4 );
-				pointLight.position = particleLight.position;
-				scene.add( pointLight );
-
-				renderer = new THREE.WebGLRenderer();
-				renderer.setSize( window.innerWidth, window.innerHeight );
-
-				container.appendChild( renderer.domElement );
-
-				stats = new Stats();
-				stats.domElement.style.position = 'absolute';
-				stats.domElement.style.top = '0px';
-        container.appendChild(stats.domElement);
-
-				// Add the COLLADA
-				scene.addFromCollada(dae, new THREE.Vector3(50, 50, 50));
-//				scene.add(dae);
-      }
-
-      //
-
-			var t = 0;
-			function animate() {
-        scene.simulate(undefined, 2);
-				requestAnimationFrame( animate );
-
-				if ( t > 30 ) t = 0;
-
-				if ( skin ) {
-
-					// guess this can be done smarter...
-
-					// (Indeed, there are way more frames than needed and interpolation is not used at all
-					//  could be something like - one morph per each skinning pose keyframe, or even less,
-					//  animation could be resampled, morphing interpolation handles sparse keyframes quite well.
-					//  Simple animation cycles like this look ok with 10-15 frames instead of 100 ;)
-
-					for ( var i = 0; i < skin.morphTargetInfluences.length; i++ ) {
-
-						skin.morphTargetInfluences[ i ] = 0;
-
-					}
-
-					skin.morphTargetInfluences[ Math.floor( t ) ] = 1;
-
-					t += 0.5;
-
-				}
-
-				render();
-				stats.update();
-			}
-
-			function render() {
-
-				var timer = Date.now() * 0.0005;
-
-				camera.position.x = Math.sin( timer ) * 10;
-				camera.position.y = 2;
-				camera.position.z = Math.cos( timer ) * 10;
-
-				camera.lookAt( scene.position );
-
-				particleLight.position.x = Math.sin( timer * 4 ) * 3009;
-				particleLight.position.y = Math.cos( timer * 5 ) * 4000;
-				particleLight.position.z = Math.cos( timer * 4 ) * 3009;
-
-				renderer.render( scene, camera );
-
-			}
-
-		</script>
-	</body>
+</head>
+<body>
+  <div id="container"></div>
+  <script src="game.js" type="text/javascript"></script>
+  <script src="./multiplayer_client.js" type="text/javascript"></script>
+</body>
 </html>

@@ -5,19 +5,16 @@ var connect = require('connect'),
 var app = connect()
     .use(connect.logger('dev'))
     .use(connect.static('gui'))
-    .use(function(req, res) {
-      res.end("Couldn't find that.\n");
-    })
     .listen(port);
 
 var io = require("socket.io").listen(app);
 
-var game = new Game();
+var game = new Game;
 
 io.sockets.on("connection", function(socket) {
   game.playerConnected(socket);
   socket.on("update", function(player) {
-    game.movePlayer(player);
+    game.updatePlayer(player);
   });
 });
 
@@ -32,6 +29,7 @@ function Game() {
     socket.emit("world", players);
     socket.on("create", function(playerData) {
       game.addPlayer(playerData, socket);
+      socket.broadcast.emit("entered", playerData);
       socket.on("disconnect", function() {
         self.playerLeft(playerData.id);
       });
@@ -49,15 +47,9 @@ function Game() {
     io.sockets.emit("left", playerID);
   };
 
-  this.movePlayer = function(playerData) {
-    for (var playerID in players) {
-      if (playerID == playerData.id) {
-        _.extend(players[playerID], playerData);
-      } else {
-        var thisPlayerSocket = playerSockets[playerID];
-        thisPlayerSocket.emit("update", playerData);
-      }
-    }
+  this.updatePlayer = function(playerData) {
+    _.extend(players[playerData.id], playerData);
+    playerSockets[playerData.id].broadcast.emit("update", playerData);
   }
 
 }
