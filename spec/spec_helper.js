@@ -23,10 +23,10 @@ var customMatchers = {
     this.actual = this.actual.inspect();
     return result;
   }
-}
+};
 
 beforeEach(function() {
-  global.world = new global.rq.World;
-  this.addMatchers(customMatchers)
+  var config = global.rq.loadConfig(__dirname + "/fixtures/game.yml");
+  global.world = new global.rq.World(config);
+  this.addMatchers(customMatchers);
 });
-

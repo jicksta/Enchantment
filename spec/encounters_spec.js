@@ -4,7 +4,7 @@ describe("Encounters", function() {
   var player, target;
   beforeEach(function() {
     player = world.createCharacter();
-    target = world.zones[0].orc
+    target = world.zones.orczone.mobs[0];
   });
 
   // The idle state is the default state.

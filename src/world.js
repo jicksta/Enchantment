@@ -2,8 +2,9 @@ var Zone = require("./zone.js").Zone,
     Player = require("./player.js").Player;
 var _ = require("underscore");
 
-exports.World = function World() {
-  this.zones = [new Zone(this)];
+exports.World = function World(config) {
+  this.config = config;
+  this.zones = this._loadZones();
   this.characters = [];
   this.attackers = {};
 };
@@ -43,5 +44,15 @@ exports.World.prototype = {
   },
   addAttacker: function(attacker) {
     this.attackers[attacker.id] = attacker;
+  },
+
+  _loadZones: function() {
+    var zones = {};
+    for(var zoneName in this.config.zones) {
+      if(this.config.zones.hasOwnProperty(zoneName)) {
+        zones[zoneName] = new Zone(this, zoneName);
+      }
+    }
+    return zones;
   }
 };

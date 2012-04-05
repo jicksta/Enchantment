@@ -1,0 +1,42 @@
+starting_level: 1
+
+races:
+  human:
+    baseHP: 20
+    baseMana: 20
+    baseStamina: 50
+
+classes:
+  warrior:
+    hasMana: false
+    hpBonus: 5
+  caster:
+    hasMana: true
+    manaBonus: 5
+
+items:
+  sword:
+    name: "Sword"
+    damage: 5
+    delay: 30
+
+mobs:
+  orc:
+    level: 1
+    name: "orc"
+    class: "warrior"
+    race: "orc"
+
+mobraces:
+  orc: {}
+
+zones:
+  orczone:
+    mobs:
+      -
+        type: "orc"
+        spawnpoint:
+          x: 0
+          y: 0
+          z: 0
+

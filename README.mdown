@@ -10,13 +10,17 @@ Next steps
 ----------
 * Initialization of game within the network server
 * Max HP / currentHP
+* Levels
+* Classes
+* Rolling for damage
+* Item and spell modifiers (Spirit of Wolf-esque spell)
+* Regen of HP, mana and stamina
 * Experience
 * Stats-based damage
 * Re-integration of physics changes
 * Deploy to Heroku
-* Item and spell modifiers (Spirit of Wolf-esque spell)
 * Spells (duration-based actions, not tick-based)
-* UI (HP, mana, chat, buffs, spell slots)
+* UI (HP, mana, stamina chat, buffs, spell slots)
 * Can loot items from dead mob.
 * Chat system
 

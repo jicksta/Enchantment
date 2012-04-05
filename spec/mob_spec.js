@@ -3,7 +3,7 @@ describe("Mob", function() {
   var player, mob;
   beforeEach(function() {
     player = world.createCharacter();
-    mob = world.zones[0].orc
+    mob = world.zones.orczone.mobs[0];
   });
 
   describe("#attack", function() {
@@ -60,8 +60,18 @@ describe("Mob", function() {
   });
 
   describe("a newly created mob", function() {
+    it("should be level 1",function() {
+      expect(mob.level).toEqual(1);
+    });
+
     it("should have an attack damage", function() {
       expect(mob.attackDamage()).toBeGreaterThan(0);
+    });
+
+    it('should have full health, mana and stamina', function() {
+      expect(mob.hp).toEqual(mob.baseHP);
+      expect(mob.mana).toEqual(mob.baseMana);
+      expect(mob.stamina).toEqual(mob.baseStamina);
     });
   });
 

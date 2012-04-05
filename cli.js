@@ -4,7 +4,7 @@ var _ = require("underscore"),
 
 var Engine = require("./src/engine.js");
 
-var world = new Engine.World;
+var world = new Engine.World(config);
 
 var TICK_TIME_MS = 6000;
 

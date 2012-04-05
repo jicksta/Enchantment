@@ -30,4 +30,4 @@ proto.receivesDamage = function(damage) {
 
 proto.isPlayer = true;
 
-proto.inspect = function() { return "Player"; }
+proto.inspect = function() { return "Player"; };
