@@ -42,4 +42,4 @@
     return _.extend({id: Math.random().toString()}, location);
   }
 
-})(RQ);
+})(E);

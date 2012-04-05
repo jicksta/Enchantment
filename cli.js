@@ -11,9 +11,9 @@ var TICK_TIME_MS = 6000;
 setupREPL();
 
 function setupREPL() {
-  report("Starting RetroQuest CLI. Take a look at your " + "world".yellow + " and " + "player".yellow);
+  report("Starting Enchantment CLI. Take a look at your " + "world".yellow + " and " + "player".yellow);
 
-  var repl = require("repl").start("RetroQuest > ");
+  var repl = require("repl").start("Enchantment > ");
 
   _.extend(repl.context, Engine);
 

@@ -1,5 +1,7 @@
-RetroQuest
-==========
+Enchantment & RetroQuest
+========================
+
+Enchantment is an bleeding edge MMORPG game engine.
 
 RetroQuest is an attempt to rebuild the magic of EverQuest with the web technologies of today.
 

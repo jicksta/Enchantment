@@ -1,4 +1,4 @@
-var RQ = {};
+var E = {};
 
 (function(ns) {
 
@@ -213,4 +213,4 @@ var RQ = {};
     }
   }
 
-})(RQ);
+})(E);
