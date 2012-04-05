@@ -14,15 +14,15 @@ exports.World.prototype = {
     for(var i = 0; i < n; i++) {
       _.each(this.attackers, function(attacker) {
         if(attacker.target !== attacker) {
-          attacker.target.receivesDamage(attacker.attackDamage());
+          attacker.target.receivesDamage(attacker.attackDamage(), attacker);
         }
       });
 
-      // We have to check for deaths after everyone has done all the damage they're going to do.
+      // After everyone has done all the damage they're going to do, check for deaths.
       var playersNoLongerAttacking = [];
       for(var id in this.attackers) {
         var attacker = this.attackers[id];
-        if (attacker.target.state === "dead") {
+        if (attacker.isPlayer && attacker.target.state === "dead") {
           attacker.awardKill(attacker.target);
         }
         if (attacker.state !== "attacking") {

@@ -5,7 +5,6 @@ describe("Player", function() {
     player = world.createCharacter();
   });
 
-
   describe("default properties", function() {
     it("should have a 'default' state by default", function() {
       expect(global.rq.Player.DEFAULT_STATE).toEqual("default");
@@ -38,10 +37,23 @@ describe("Player", function() {
     });
   });
 
+  describe("receiving damage", function() {
+
+    it("should die when receiving damage greater than its HP", function() {
+      player.receivesDamage(player.hp * 2);
+      expect(player).toBeDead();
+    });
+
+    it("should die when receiving damage equal to its HP", function() {
+      player.receivesDamage(player.hp);
+      expect(player).toBeDead();
+    });
+
+  });
 
   describe("#changeTarget", function() {
     it("should change the target, duh", function() {
-      var newTarget = new global.rq.Mob;
+      var newTarget = new global.rq.Mob(world, "Fippy Darkpaw");
       player.changeTarget(newTarget);
       expect(player.target).toEqual(newTarget);
     });
@@ -49,6 +61,12 @@ describe("Player", function() {
     it("should allow targetting oneself", function() {
       player.changeTarget(player);
       expect(player.target).toEqual(player);
+    });
+  });
+
+  describe("#isPlayer", function() {
+    it("returns true", function() {
+      expect(player.isPlayer).toEqual(true);
     });
   });
 

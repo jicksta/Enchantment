@@ -35,16 +35,71 @@ describe("Encounters", function() {
   });
 
   describe("hitting a mob", function() {
-    it("should do the damage of the player's weapon each tick", function() {
-      var dmg = player.attackDamage();
-      expect(dmg).toBeGreaterThan(0);
-      var initialHP = target.hp;
-      expect(initialHP).toBeGreaterThan(dmg * 2);
-      player.attack(target);
-      world.tick();
-      expect(target.hp).toEqual(initialHP - dmg);
-      world.tick();
-      expect(target.hp).toEqual(initialHP - (dmg * 2));
+    describe("one on one", function() {
+      it("should do the damage of the player's weapon each tick", function() {
+        var dmg = player.attackDamage();
+        expect(dmg).toBeGreaterThan(0);
+        var initialHP = target.hp;
+        expect(initialHP).toBeGreaterThan(dmg * 2);
+        player.attack(target);
+        world.tick();
+        expect(target.hp).toEqual(initialHP - dmg);
+        world.tick();
+        expect(target.hp).toEqual(initialHP - (dmg * 2));
+      });
+
+      it("should cause the mob to target and start attacking the player", function() {
+        var initialPlayerHP = player.hp;
+        expect(target.target).not.toEqual(player);
+        expect(target.state).not.toEqual("attacking");
+        player.attack(target);
+        world.tick();
+        expect(target.target).toEqual(player);
+        expect(target.state).toEqual("attacking");
+        world.tick();
+        expect(player.hp).toBeLessThan(initialPlayerHP);
+      });
+
+    });
+
+    describe("two players on one mob", function() {
+      it("should transition aggro to the second player when the first one dies", function() {
+        target.hp += 100;
+
+        player.attack(target);
+        world.tick();
+
+        var otherPlayer = world.createCharacter();
+        otherPlayer.attack(target);
+        world.tick();
+
+        expect(target).toBeAlive();
+        player.receivesDamage(player.hp);
+        world.tick();
+
+        expect(player).toBeDead();
+        expect(target.state).toEqual("attacking");
+        expect(target.target).toEqual(otherPlayer);
+      });
+
+      it("should transition aggro when one player does more damage than another", function() {
+        target.hp += 100;
+        player.hp += 100;
+
+        player.attack(target);
+        world.tick(); // Player damage = 10
+
+        var otherPlayer = world.createCharacter();
+        otherPlayer.weapon.damage *= 1.9;
+        otherPlayer.attack(target);
+        world.tick(); // Player damage = 20, otherPlayer = 19
+
+        expect(target.target).toEqual(player);
+        world.tick(); // Player damage = 30, otherPlayer = 38
+
+        expect(target.target).toEqual(otherPlayer);
+      });
+
     });
   });
 
@@ -53,7 +108,7 @@ describe("Encounters", function() {
     it("should kill the mob when the player exhausts the target's HP", function() {
       kill();
       expect(target.hp).toEqual(0);
-      expect(target.state).toEqual("dead");
+      expect(target).toBeDead();
     });
 
     it("should bring the player back to the 'default' state", function() {
@@ -75,12 +130,12 @@ describe("Encounters", function() {
       world.tick();
       expect(player.state).toEqual("attacking");
 
-      var otherMob = new global.rq.Mob("a moss snake"); // Should be something with same or higher HP as `target`
+      var otherMob = new global.rq.Mob(world, "a moss snake"); // Should be something with same or higher HP as `target`
       player.attack(otherMob);
       expect(player.state).toEqual('attacking');
       expect(otherMob.state).not.toEqual('dead');
 
-      while(target.state != "dead") {
+      while (target.state != "dead") {
         world.tick();
       }
       expect(player.target).toEqual(otherMob);
@@ -99,5 +154,16 @@ describe("Encounters", function() {
 
   });
 
+  describe("the player dying", function() {
+    it("should no longer be in the attackers list", function() {
+      player.attack(target);
+      world.tick();
+      expect(player.id in world.attackers).toEqual(true);
+      player.receivesDamage(player.hp);
+      world.tick();
+      expect(player).toBeDead();
+      expect(player.id in world.attackers).toEqual(false);
+    });
+  });
 
 });

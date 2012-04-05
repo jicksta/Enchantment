@@ -1,11 +1,24 @@
 RetroQuest
 ==========
 
-RetroQuest is an attempt to rebuild the magic of EverQuest with the technologies of today.
+RetroQuest is an attempt to rebuild the magic of EverQuest with the web technologies of today.
 
 Next steps
 ----------
+* Experience
+* Re-integration of physics changes
+* Spells (duration-based actions, not tick-based)
+* UI (HP, mana, chat, buffs, spell slots)
+* Can loot items from dead mob.
+* Chat system
 
-* Attacked mob auto-attacks back after first hit.
-* Can kill a mob.
-* Mob can kill you.
+
+Epics
+-----
+
+* Pathfinding
+* Mob animations
+* UI
+* Character / Account creation
+* Better content
+* Map editor for defining mob patrols, fear lines, etc
