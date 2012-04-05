@@ -5,10 +5,16 @@ Enchantment is an bleeding edge MMORPG game engine.
 
 RetroQuest is an attempt to rebuild the magic of EverQuest with the web technologies of today.
 
+
 Next steps
 ----------
+* Initialization of game within the network server
+* Max HP / currentHP
 * Experience
+* Stats-based damage
 * Re-integration of physics changes
+* Deploy to Heroku
+* Item and spell modifiers (Spirit of Wolf-esque spell)
 * Spells (duration-based actions, not tick-based)
 * UI (HP, mana, chat, buffs, spell slots)
 * Can loot items from dead mob.

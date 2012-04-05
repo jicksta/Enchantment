@@ -36,12 +36,15 @@
     }
   };
 
+  proto.awardKill = function(victim) {
+    this.hateList.remove(victim);
+    this._checkHateList();
+  };
+
   proto._checkHateList = function() {
     var mostHated = this.hateList.first();
     if(this.target !== mostHated) this.attack(mostHated);
   };
-
-  proto.isPlayer = false;
 
   proto.inspect = function() { return "Mob <" + this.name + ">"; }
 })();

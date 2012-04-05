@@ -51,31 +51,27 @@
 
   proto.updatePriority = function(obj, newPriority) {
     if (!this.has(obj)) throw("Object is not in this set!");
-
-    var previousPriority = this.priorityOf(obj);
-
-    if (previousPriority !== newPriority) {
-      var id = obj[this.idProperty];
-      this._objectsToPriorities[id] = newPriority;
-      var objectsAtPreviousPriority = this._prioritiesToObjects[previousPriority];
-      delete objectsAtPreviousPriority[id];
-      if (_.isEmpty(objectsAtPreviousPriority)) {
-        delete this._prioritiesToObjects[previousPriority];
-        this._sortedPriorities = _.without(this._sortedPriorities, previousPriority); // Can be optimized
-      }
-
-      if(!(newPriority in this._prioritiesToObjects)) {
-        this._sortedPriorities.push(newPriority);
-        this._sortedPriorities = _.sortBy(this._sortedPriorities, _.identity);
-      }
-
-      this._prioritiesToObjects[newPriority] = this._prioritiesToObjects[newPriority] || {};
-      this._prioritiesToObjects[newPriority][id] = obj;
-    }
+    this.remove(obj);
+    this.add(obj, newPriority);
   };
 
   proto.priorityOf = function(obj) {
     return this._objectsToPriorities[obj[this.idProperty]];
   };
+
+  proto.remove = function(obj) {
+    if (!this.has(obj)) return;
+
+    var id = obj[this.idProperty];
+    var priority = this._objectsToPriorities[id];
+
+    delete this._objectsToPriorities[id];
+    var objectsAtPreviousPriority = this._prioritiesToObjects[priority];
+    delete objectsAtPreviousPriority[id];
+    if (_.isEmpty(objectsAtPreviousPriority)) {
+      delete this._prioritiesToObjects[priority];
+      this._sortedPriorities = _.without(this._sortedPriorities, priority); // Can be optimized
+    }
+  }
 
 })(exports);

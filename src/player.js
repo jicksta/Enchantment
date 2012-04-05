@@ -5,12 +5,10 @@ exports.Player = function Player(world) {
   this.target = null;
   this.weapon = {damage: 10};
   this.world = world;
-  this.state = exports.Player.DEFAULT_STATE;
+  this.state = this.DEFAULT_STATE;
   this.killCount = 0;
   this.id = Math.random().toString();
 };
-
-exports.Player.DEFAULT_STATE = "default";
 
 var proto = exports.Player.prototype = new Fighter;
 
@@ -18,7 +16,7 @@ proto.awardKill = function(victim) {
   this.killCount++;
   if (this.target === victim) {
     this.target = null;
-    this.state = exports.Player.DEFAULT_STATE;
+    this.state = this.DEFAULT_STATE;
   }
 };
 

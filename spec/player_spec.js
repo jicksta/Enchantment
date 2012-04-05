@@ -7,7 +7,7 @@ describe("Player", function() {
 
   describe("default properties", function() {
     it("should have a 'default' state by default", function() {
-      expect(global.rq.Player.DEFAULT_STATE).toEqual("default");
+      expect(global.rq.Player.prototype.DEFAULT_STATE).toEqual("default");
       expect(player.state).toEqual("default");
     });
 
@@ -58,7 +58,7 @@ describe("Player", function() {
       expect(player.target).toEqual(newTarget);
     });
 
-    it("should allow targetting oneself", function() {
+    it("should allow targeting oneself", function() {
       player.changeTarget(player);
       expect(player.target).toEqual(player);
     });

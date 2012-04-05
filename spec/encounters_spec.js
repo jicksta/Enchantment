@@ -17,19 +17,18 @@ describe("Encounters", function() {
   describe("the 'attacking' state", function() {
     it("should become the current state after attacking", function() {
       expect(player.state).not.toEqual("attacking");
+      expect(player).not.toBeAttacking();
       player.attack(target);
       expect(player.state).toEqual("attacking");
+      expect(player).toBeAttacking();
     });
 
     describe("while the player has herself selected", function() {
       it("should not do any damage", function() {
-        player.changeTarget(player);
-        expect(player.attack());
-        expect(player.state).toEqual("attacking");
-        expect(player.target).toEqual(player);
-        var initialHP = player.hp;
+        player.attack(target);
         world.tick();
-        expect(player.hp).toEqual(initialHP);
+        player.changeTarget(player);
+        expect(player).not.toBeAttacking();
       });
     });
   });
@@ -51,11 +50,10 @@ describe("Encounters", function() {
       it("should cause the mob to target and start attacking the player", function() {
         var initialPlayerHP = player.hp;
         expect(target.target).not.toEqual(player);
-        expect(target.state).not.toEqual("attacking");
+        expect(target).not.toBeAttacking();
         player.attack(target);
         world.tick();
-        expect(target.target).toEqual(player);
-        expect(target.state).toEqual("attacking");
+        expect(target).toBeAttacking(player);
         world.tick();
         expect(player.hp).toBeLessThan(initialPlayerHP);
       });
@@ -78,8 +76,7 @@ describe("Encounters", function() {
         world.tick();
 
         expect(player).toBeDead();
-        expect(target.state).toEqual("attacking");
-        expect(target.target).toEqual(otherPlayer);
+        expect(target).toBeAttacking(otherPlayer);
       });
 
       it("should transition aggro when one player does more damage than another", function() {
@@ -113,7 +110,7 @@ describe("Encounters", function() {
 
     it("should bring the player back to the 'default' state", function() {
       kill();
-      expect(player.state).toEqual(global.rq.Player.DEFAULT_STATE);
+      expect(player.state).toEqual(global.rq.Player.prototype.DEFAULT_STATE);
     });
 
     it("should increase the kill count", function() {
@@ -128,7 +125,7 @@ describe("Encounters", function() {
       player.attack(target);
       otherPlayer.attack(target);
       world.tick();
-      expect(player.state).toEqual("attacking");
+      expect(player).toBeAttacking(target);
 
       var otherMob = new global.rq.Mob(world, "a moss snake"); // Should be something with same or higher HP as `target`
       player.attack(otherMob);

@@ -19,21 +19,23 @@ exports.World.prototype = {
       });
 
       // After everyone has done all the damage they're going to do, check for deaths.
-      var playersNoLongerAttacking = [];
       for(var id in this.attackers) {
         var attacker = this.attackers[id];
-        if (attacker.isPlayer && attacker.target.state === "dead") {
-          attacker.awardKill(attacker.target);
+        if (attacker.target.state === "dead") {
+          this.fighterKilledFighter(attacker, attacker.target)
         }
         if (attacker.state !== "attacking") {
-          playersNoLongerAttacking.push(id);
+          delete this.attackers[id];
         }
-      }
-      for(var index in playersNoLongerAttacking) {
-        delete this.attackers[playersNoLongerAttacking[index]];
       }
     }
   },
+
+  fighterKilledFighter: function(survivor, deceased) {
+    delete this.attackers[deceased.id];
+    survivor.awardKill(deceased);
+  },
+
   createCharacter: function() {
     var character = new Player(this);
     this.characters.push(character);

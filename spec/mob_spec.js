@@ -15,7 +15,7 @@ describe("Mob", function() {
 
     it("should set change the mob's state to attacking", function() {
       mob.attack(player);
-      expect(mob.state).toEqual("attacking");
+      expect(mob).toBeAttacking();
     });
 
     it("should add itself to its world's attackers list", function() {
@@ -31,13 +31,29 @@ describe("Mob", function() {
       expect(player.hp).toEqual(initialHP - mob.attackDamage());
     });
 
-    describe("when the attackee dies", function() {
-      it("should remove the attackee from its hate list", function() {
-        throw("TODO")
+    describe("when the victim dies", function() {
+
+      beforeEach(function() {
+        mob.hp += 100;
+      });
+
+      it("should remove the victim from its hate list", function() {
+        player.attack(mob);
+        world.tick(2);
+        expect(mob.hateList.has(player)).toEqual(true);
+        player.receivesDamage(player.hp, mob);
+        world.tick();
+        expect(mob.hateList.has(player)).toEqual(false);
       });
 
       it("should start attacking the next person on the hate list when the first one dies", function() {
-        throw("TODO");
+        var otherPlayer = world.createCharacter();
+        player.attack(mob);
+        otherPlayer.attack(mob);
+        world.tick();
+        player.receivesDamage(player.hp, mob);
+        world.tick();
+        expect(mob).toBeAttacking(otherPlayer);
       });
     });
 
