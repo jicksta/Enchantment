@@ -5,6 +5,7 @@ races:
     baseHP: 20
     baseMana: 20
     baseStamina: 50
+    startingZones: ["orczone"]
 
 classes:
   warrior:
@@ -32,6 +33,7 @@ mobraces:
 
 zones:
   orczone:
+    name: "Orc Testing Zone"
     mobs:
       -
         type: "orc"

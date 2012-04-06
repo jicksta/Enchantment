@@ -1,10 +1,11 @@
 // These are mostly functional tests across classes.
 describe("Encounters", function() {
 
-  var player, target;
+  var player, zone, target;
   beforeEach(function() {
-    player = world.createCharacter();
-    target = world.zones.orczone.mobs[0];
+    player = world.createCharacter({race: "human", class: "warrior", level: 1});
+    zone = world.zones.orczone;
+    target = zone.mobs[0];
   });
 
   // The idle state is the default state.
@@ -67,7 +68,7 @@ describe("Encounters", function() {
         player.attack(target);
         world.tick();
 
-        var otherPlayer = world.createCharacter();
+        var otherPlayer = world.createCharacter({race: "human", class: "warrior", level: 1});
         otherPlayer.attack(target);
         world.tick();
 
@@ -86,7 +87,7 @@ describe("Encounters", function() {
         player.attack(target);
         world.tick(); // Player damage = 10
 
-        var otherPlayer = world.createCharacter();
+        var otherPlayer = world.createCharacter({race: "human", class: "warrior", level: 1});
         otherPlayer.weapon.damage *= 1.9;
         otherPlayer.attack(target);
         world.tick(); // Player damage = 20, otherPlayer = 19
@@ -120,14 +121,14 @@ describe("Encounters", function() {
     });
 
     it("should preserve the 'attacking' state if the kill awarded was not the current target", function() {
-      var otherPlayer = world.createCharacter();
+      var otherPlayer = world.createCharacter({race: "human", class: "warrior", level: 1});
 
       player.attack(target);
       otherPlayer.attack(target);
       world.tick();
       expect(player).toBeAttacking(target);
 
-      var otherMob = new global.rq.Mob(world, "a moss snake"); // Should be something with same or higher HP as `target`
+      var otherMob = new global.rq.Mob(zone, "a moss snake"); // Should be something with same or higher HP as `target`
       player.attack(otherMob);
       expect(player.state).toEqual('attacking');
       expect(otherMob.state).not.toEqual('dead');
@@ -155,11 +156,11 @@ describe("Encounters", function() {
     it("should no longer be in the attackers list", function() {
       player.attack(target);
       world.tick();
-      expect(player.id in world.attackers).toEqual(true);
+      expect(player.id in zone.attackers).toEqual(true);
       player.receivesDamage(player.hp);
       world.tick();
       expect(player).toBeDead();
-      expect(player.id in world.attackers).toEqual(false);
+      expect(player.id in zone.attackers).toEqual(false);
     });
   });
 

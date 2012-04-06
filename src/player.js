@@ -1,13 +1,17 @@
-var Fighter = require("./fighter.js").Fighter;
+var Fighter = require("./fighter.js").Fighter,
+    _ = require("underscore");
 
-exports.Player = function Player(world) {
-  this.hp = 100;
-  this.target = null;
-  this.weapon = {damage: 10};
+exports.Player = function Player(world, params) {
   this.world = world;
+  this.id = Math.random().toString();
   this.state = this.DEFAULT_STATE;
   this.killCount = 0;
-  this.id = Math.random().toString();
+
+  _.extend(this, params);
+
+  this.hp = 100; // TODO: Get rid of this.
+  this.target = null;
+  this.weapon = {damage: 10};
 };
 
 var proto = exports.Player.prototype = new Fighter;

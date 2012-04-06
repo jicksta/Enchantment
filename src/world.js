@@ -6,44 +6,20 @@ exports.World = function World(config) {
   this.config = config;
   this.zones = this._loadZones();
   this.characters = [];
-  this.attackers = {};
 };
 
 exports.World.prototype = {
-  tick: function(n) {
-    if(n == null) n = 1;
-    for(var i = 0; i < n; i++) {
-      _.each(this.attackers, function(attacker) {
-        if(attacker.target !== attacker) {
-          attacker.target.receivesDamage(attacker.attackDamage(), attacker);
-        }
-      });
 
-      // After everyone has done all the damage they're going to do, check for deaths.
-      for(var id in this.attackers) {
-        var attacker = this.attackers[id];
-        if (attacker.target.state === "dead") {
-          this.fighterKilledFighter(attacker, attacker.target)
-        }
-        if (attacker.state !== "attacking") {
-          delete this.attackers[id];
-        }
-      }
-    }
+  tick: function() {
+    _.invoke(this.zones, "tick");
   },
 
-  fighterKilledFighter: function(survivor, deceased) {
-    delete this.attackers[deceased.id];
-    survivor.awardKill(deceased);
-  },
-
-  createCharacter: function() {
-    var character = new Player(this);
+  createCharacter: function(params) {
+    var character = new Player(this, params);
+    var startingZoneName = this.config.races[params.race].startingZones[0];
+    character.zone = this.zones[startingZoneName];
     this.characters.push(character);
     return character;
-  },
-  addAttacker: function(attacker) {
-    this.attackers[attacker.id] = attacker;
   },
 
   _loadZones: function() {

@@ -14,7 +14,7 @@ exports.Fighter.prototype = {
   attack: function(target) {
     if (target) this.changeTarget(target);
     this.state = "attacking";
-    this.world.addAttacker(this);
+    this.zone.addAttacker(this);
   },
 
   attackDamage: function() {

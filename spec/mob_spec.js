@@ -1,9 +1,14 @@
 describe("Mob", function() {
 
-  var player, mob;
+  var _ = require("underscore"),
+      Mob = require("../src/mob.js").Mob;
+
+  var player, zone, mob, playerParams;
   beforeEach(function() {
-    player = world.createCharacter();
-    mob = world.zones.orczone.mobs[0];
+    playerParams = {race: "human", class: "warrior", level: 1};
+    player = world.createCharacter(playerParams);
+    zone = world.zones.orczone;
+    mob = zone.mobs[0];
   });
 
   describe("#attack", function() {
@@ -18,10 +23,10 @@ describe("Mob", function() {
       expect(mob).toBeAttacking();
     });
 
-    it("should add itself to its world's attackers list", function() {
-      spyOn(world, "addAttacker");
+    it("should add itself to its zone's attackers list", function() {
+      spyOn(zone, "addAttacker");
       mob.attack(player);
-      expect(world.addAttacker).toHaveBeenCalledWith(mob);
+      expect(zone.addAttacker).toHaveBeenCalledWith(mob);
     });
 
     it("should do its attack damage each tick", function() {
@@ -47,7 +52,7 @@ describe("Mob", function() {
       });
 
       it("should start attacking the next person on the hate list when the first one dies", function() {
-        var otherPlayer = world.createCharacter();
+        var otherPlayer = world.createCharacter({race: "human", class: "warrior", level: 1});
         player.attack(mob);
         otherPlayer.attack(mob);
         world.tick();
@@ -59,9 +64,14 @@ describe("Mob", function() {
 
   });
 
-  describe("a newly created mob", function() {
-    it("should be level 1",function() {
-      expect(mob.level).toEqual(1);
+  describe("newly instantiated mob", function() {
+
+    it("should load the params", function() {
+      var mobParams = world.config.mobs.orc;
+      var mob = new Mob(zone, mobParams);
+      _.each(mobParams, function(value, key) {
+        expect(mob[key]).toEqual(value);
+      });
     });
 
     it("should have an attack damage", function() {
@@ -73,6 +83,10 @@ describe("Mob", function() {
       expect(mob.mana).toEqual(mob.baseMana);
       expect(mob.stamina).toEqual(mob.baseStamina);
     });
+
+    it("should have its zone", function() {
+      expect(mob.zone).toEqual(world.zones.orczone);
+    })
   });
 
   describe("#isPlayer", function() {

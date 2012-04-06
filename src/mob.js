@@ -4,8 +4,8 @@
       Fighter = require("./fighter.js").Fighter,
       PrioritySet = require("./util/priority_set.js").PrioritySet;
 
-  exports.Mob = function Mob(world, params) {
-    this.world = world;
+  exports.Mob = function Mob(zone, params) {
+    this.zone = zone;
     this.state = "idle";
     this.hateList = new PrioritySet("id");
 
