@@ -28,7 +28,7 @@ var CustomMatchers = {
 var TestHelpers = {
   _: require("underscore"),
   createWarriorPlayer: function() {
-    return world.createCharacter({race: "human", class: "warrior", level: 1});
+    return world.createPlayer({race: "human", class: "warrior", level: 1});
   }
 };
 

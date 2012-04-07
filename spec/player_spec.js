@@ -5,10 +5,10 @@ describe("Player", function() {
   var player, playerParams;
   beforeEach(function() {
     playerParams = {class: "warrior", race: "human", level: 1};
-    player = world.createCharacter(playerParams);
+    player = world.createPlayer(playerParams);
   });
 
-  describe("a newly created character", function() {
+  describe("a newly created player", function() {
 
     it("should have all the properties passed to it as params", function() {
       _.each(playerParams, function(value, key) {
@@ -20,7 +20,7 @@ describe("Player", function() {
       expect(player.baseHP).toBeGreaterThan(0);
     });
 
-    it("should create a character a single weapon with damage", function() {
+    it("should create a player with a single weapon with damage", function() {
       expect(player.weapon).toBeDefined();
       expect(player.weapon.damage).toBeGreaterThan(0);
     });

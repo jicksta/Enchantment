@@ -2,10 +2,10 @@ describe("World", function() {
 
   var _ = require("underscore");
 
-  describe("#createCharacter", function() {
-    it("should put the character in its starting zone", function() {
-      var character = createWarriorPlayer();
-      expect(character.zone.name).toEqual(world.config.races[character.race].startingZone.name);
+  describe("#createPlayer", function() {
+    it("should put the player in its starting zone", function() {
+      var player = createWarriorPlayer();
+      expect(player.zone.name).toEqual(world.config.races[player.race].startingZone.name);
     });
 
   });

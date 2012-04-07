@@ -6,7 +6,7 @@ describe("Mob", function() {
   var player, zone, mob, playerParams;
   beforeEach(function() {
     playerParams = {race: "human", class: "warrior", level: 1};
-    player = world.createCharacter(playerParams);
+    player = world.createPlayer(playerParams);
     zone = world.zones.orczone;
     mob = zone.mobs.first();
   });
