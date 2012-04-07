@@ -4,9 +4,13 @@ var _ = require("underscore"),
 
 var Engine = require("./src/engine.js");
 
-var world = new Engine.World(config);
+var config = Engine.loadConfig("./spec/fixtures/game.yml")
+var world = global.world = new Engine.World(config);
+world.DEBUG = true;
 
-var TICK_TIME_MS = 6000;
+require("./spec/helpers.js");
+
+var TICK_TIME_MS = 1000;
 
 setupREPL();
 

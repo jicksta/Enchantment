@@ -1,5 +1,7 @@
 global.rq = require("../src/engine.js");
 
+require("./helpers.js");
+
 var CustomMatchers = {
   toBeDead: function() {
     var result = this.actual.state === "dead";
@@ -24,24 +26,6 @@ var CustomMatchers = {
     return result;
   }
 };
-
-var TestHelpers = {
-  _: require("underscore"),
-  createWarriorPlayer: function() {
-    return world.createPlayer("Jick", {race: "human", class: "warrior", level: 1});
-  },
-  tickWhile: function(expression, tickable, maxTicks) {
-    if(maxTicks == null) maxTicks = 100;
-    var ticks = 0;
-    while(expression()) {
-      ticks++;
-      if(ticks >= maxTicks) throw("TICKED TOO MANY TIMES (" + ticks + "/" + maxTicks + ")");
-      tickable.tick();
-    }
-  }
-};
-
-TestHelpers._.extend(global, TestHelpers);
 
 beforeEach(function() {
   var config = global.rq.loadConfig(__dirname + "/fixtures/game.yml");

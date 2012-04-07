@@ -2,6 +2,8 @@
 
 (function() {
 
+  var _ = require("underscore");
+
   exports.GmCalculator = function(world) {
     this.world = world;
   };

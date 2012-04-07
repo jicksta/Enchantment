@@ -10,6 +10,7 @@ Next steps
 ----------
 * Activity logging
 * Zone#attackers should be an IdSet. IdSet should probably support some underscore methods
+* Rename world in the tests to just w
 * Spell modifiers (Spirit of Wolf-esque spell, Invincibility, Debuffs)
 * Inventory
 * Worn item stat modifiers
@@ -40,9 +41,6 @@ Epics
 * Character / Account creation
 * Better content
 * Map editor for defining mob patrols, fear lines, etc
-
-
-NOTE: Damn! I may have referenced "world" instead of this.world in other places in the app code.
 
 Features (that are already implemented)
 --------
