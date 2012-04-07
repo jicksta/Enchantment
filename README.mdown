@@ -8,6 +8,8 @@ RetroQuest is an attempt to rebuild the magic of EverQuest with the web technolo
 
 Next steps
 ----------
+* Activity logging
+* Zone#attackers should be an IdSet. IdSet should probably support some underscore methods
 * Spell modifiers (Spirit of Wolf-esque spell, Invincibility, Debuffs)
 * Inventory
 * Worn item stat modifiers

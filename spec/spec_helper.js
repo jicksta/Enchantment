@@ -28,7 +28,7 @@ var CustomMatchers = {
 var TestHelpers = {
   _: require("underscore"),
   createWarriorPlayer: function() {
-    return world.createPlayer({race: "human", class: "warrior", level: 1});
+    return world.createPlayer("Jick", {race: "human", class: "warrior", level: 1});
   },
   tickWhile: function(expression, tickable, maxTicks) {
     if(maxTicks == null) maxTicks = 100;

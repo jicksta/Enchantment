@@ -4,8 +4,8 @@ describe("Player", function() {
 
   var player, playerParams;
   beforeEach(function() {
-    playerParams = {class: "warrior", race: "human", level: 1};
-    player = world.createPlayer(playerParams);
+    player = createWarriorPlayer();
+    playerParams = {class: player.class, race: player.race, level: player.level};
   });
 
   describe("a newly created player", function() {

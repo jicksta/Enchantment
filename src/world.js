@@ -13,18 +13,24 @@ exports.World = function World(config) {
 
 exports.World.prototype = {
 
+  DEBUG: false,
+
   tick: function() {
     _.invoke(this.zones, "tick");
   },
 
-  createPlayer: function(params) {
-    var player = new Player(this, params);
+  createPlayer: function(name, params) {
+    var player = new Player(this, name, params);
 
     var startingZoneName = this.config.races[params.race].startingZone;
     var zone = this.zones[startingZoneName];
     player.enterZone(zone);
     this.players.add(player);
     return player;
+  },
+
+  report: function(message) {
+    if(this.DEBUG) console.log(message);
   },
 
   _loadZones: function() {

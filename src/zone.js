@@ -22,10 +22,7 @@ proto.tick = function(n) {
 
   function tickAttacks() {
     _.each(self.attackers, function(attacker) {
-      if (attacker.target !== attacker) {
-        var dmg = attacker.attackDamage();
-        attacker.target.receivesDamage(dmg, attacker);
-      }
+      attacker.hitTarget();
     });
 
     // After everyone has done all the damage they're going to do, check for deaths.
@@ -62,6 +59,10 @@ proto.characterKilledCharacter = function(survivor, deceased) {
 
 proto.addAttacker = function(attacker) {
   this.attackers[attacker.id] = attacker;
+};
+
+proto.reportDamage = function(message) {
+  this.world.report(message);
 };
 
 proto._zoneConfig = function() {

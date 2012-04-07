@@ -3,10 +3,9 @@ describe("Mob", function() {
   var _ = require("underscore"),
       Mob = require("../src/mob.js").Mob;
 
-  var player, zone, mob, playerParams;
+  var player, zone, mob;
   beforeEach(function() {
-    playerParams = {race: "human", class: "warrior", level: 1};
-    player = world.createPlayer(playerParams);
+    player = createWarriorPlayer();
     zone = world.zones.orczone;
     mob = zone.mobs.first();
   });

@@ -3,11 +3,12 @@ var Character = require("./character.js").Character,
 
 
 // "params" must have: class, race and level.
-exports.Player = function Player(world, params) {
+exports.Player = function Player(world, name, params) {
   this.world = world;
   this.id = Math.random().toString();
   this.state = this.DEFAULT_STATE;
   this.killCount = 0;
+  this.name = name;
 
   this.target = null;
   this.weapon = {damage: 10};
@@ -42,9 +43,9 @@ proto.enterZone = function(zone) {
 proto.isPlayer = true;
 
 proto.inspect = function() {
-  return "Player";
+  return "Player (" + this + ")";
 };
 
 proto.toString = function() {
-  return this.id;
+  return this.name;
 };
