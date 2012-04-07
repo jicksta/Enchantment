@@ -10,9 +10,10 @@ describe("Zone", function() {
   describe("initialization", function() {
 
     describe("loading of players", function() {
-      it("should have the player in its list of fighters", function() {
-
-      })
+      it("should have the player in its list of characters", function() {
+        var player = createWarriorPlayer();
+        expect(zone.characters.has(player)).toEqual(true);
+      });
     });
 
     describe("loading of mobs", function() {
@@ -31,9 +32,9 @@ describe("Zone", function() {
         expect(zone.mobs.first().zone).toEqual(zone);
       });
 
-      it("has the mob in its list of fighters", function() {
+      it("has the mob in its list of characters", function() {
         zone.mobs.each(function(mob) {
-          expect(zone.fighters.has(mob)).toEqual(true);
+          expect(zone.characters.has(mob)).toEqual(true);
         });
       });
 
@@ -41,7 +42,7 @@ describe("Zone", function() {
 
   });
 
-  describe("when a fighter kills another fighter", function() {
+  describe("when a character kills another character", function() {
 
     it("should remove the victim from the attackers list", function() {
       var survivor = createWarriorPlayer(),
@@ -52,7 +53,7 @@ describe("Zone", function() {
       world.tick();
 
       expect(victim.id in zone.attackers).toEqual(true);
-      zone.fighterKilledFighter(survivor, victim);
+      zone.characterKilledCharacter(survivor, victim);
       expect(victim.id in zone.attackers).toEqual(false);
     });
 

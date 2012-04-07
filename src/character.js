@@ -1,6 +1,6 @@
-exports.Fighter = function() {}
+exports.Character = function() {}
 
-exports.Fighter.prototype = {
+exports.Character.prototype = {
 
   DEFAULT_STATE: "default",
 

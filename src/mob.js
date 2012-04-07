@@ -1,7 +1,7 @@
 (function() {
 
   var _ = require("underscore"),
-      Fighter = require("./fighter.js").Fighter,
+      Character = require("./character.js").Character,
       PrioritySet = require("./util/priority_set.js").PrioritySet;
 
   exports.Mob = function Mob(zone, params) {
@@ -21,7 +21,7 @@
     this.stamina = this.baseStamina;
   };
 
-  var proto = exports.Mob.prototype = new Fighter;
+  var proto = exports.Mob.prototype = new Character;
 
   proto.receivesDamage = function(damage, damageSource) {
     this.hp -= damage;

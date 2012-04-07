@@ -1,4 +1,4 @@
-var Fighter = require("./fighter.js").Fighter,
+var Character = require("./character.js").Character,
     _ = require("underscore");
 
 exports.Player = function Player(world, params) {
@@ -19,7 +19,7 @@ exports.Player = function Player(world, params) {
   this.hp = this.baseHP;
 };
 
-var proto = exports.Player.prototype = new Fighter;
+var proto = exports.Player.prototype = new Character;
 
 proto.awardKill = function(victim) {
   this.killCount++;

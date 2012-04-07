@@ -11,7 +11,6 @@ Next steps
 * Use GmCalculator for all stat calculations. Start doing mana and stamina.
 * Spell modifiers (Spirit of Wolf-esque spell, Invincibility, Debuffs)
 * Inventory
-* Rename character to player, and fighter to character.
 * Worn item stat modifiers
 * Ability to cast spells to do damage.
 * Use a spell modifier to remove all randomness for easier testing

@@ -139,7 +139,7 @@ describe("Encounters", function() {
     it("removes the killed mob from the zone's list of mobs", function() {
       player.attack(target);
       do { world.tick() } while(target.state !== "dead");
-      expect(zone.fighters.has(target)).toEqual(false);
+      expect(zone.characters.has(target)).toEqual(false);
       expect(zone.mobs.has(target)).toEqual(false);
     });
 

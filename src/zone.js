@@ -6,7 +6,7 @@ exports.Zone = function Zone(world, zoneName) {
   this.world = world;
   this.zoneName = zoneName;
   this.attackers = {};
-  this.fighters = new Set;
+  this.characters = new Set;
   this._loadMobs();
 };
 
@@ -32,7 +32,7 @@ proto.tick = function(n) {
     for (var id in self.attackers) {
       var attacker = self.attackers[id];
       if (attacker.target.state === "dead") {
-        self.fighterKilledFighter(attacker, attacker.target)
+        self.characterKilledCharacter(attacker, attacker.target)
       }
       if (attacker.state !== "attacking") {
         delete self.attackers[id];
@@ -42,21 +42,21 @@ proto.tick = function(n) {
   }
 
   function tickRegen() {
-    self.fighters.each(function(fighter) {
-      fighter.regenTick();
+    self.characters.each(function(character) {
+      character.regenTick();
     });
   }
 
 };
 
 proto.playerEnters = function(player) {
-  this.fighters.add(player);
+  this.characters.add(player);
 };
 
-proto.fighterKilledFighter = function(survivor, deceased) {
+proto.characterKilledCharacter = function(survivor, deceased) {
   delete this.attackers[deceased.id];
   if(!deceased.isPlayer) this.mobs.remove(deceased);
-  this.fighters.remove(deceased);
+  this.characters.remove(deceased);
   survivor.awardKill(deceased);
 };
 
@@ -76,7 +76,7 @@ proto._loadMobs = function() {
     var mobParams = self.world.config.mobs[mobType];
     var mob = new Mob(self, mobParams);
     self.mobs.add(mob);
-    self.fighters.add(mob);
+    self.characters.add(mob);
   });
 };
 

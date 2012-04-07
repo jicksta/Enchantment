@@ -13,12 +13,12 @@ var CustomMatchers = {
     return result;
   },
 
-  toBeAttacking: function(fighter) {
+  toBeAttacking: function(character) {
     if(this.actual.state !== "attacking") return false;
 
     var result = true;
 
-    if(fighter && this.actual.target !== fighter) result = false;
+    if(character && this.actual.target !== character) result = false;
 
     this.actual = this.actual.inspect();
     return result;
