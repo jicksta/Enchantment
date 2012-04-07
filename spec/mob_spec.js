@@ -8,7 +8,7 @@ describe("Mob", function() {
     playerParams = {race: "human", class: "warrior", level: 1};
     player = world.createCharacter(playerParams);
     zone = world.zones.orczone;
-    mob = zone.mobs[0];
+    mob = zone.mobs.first();
   });
 
   describe("#attack", function() {
@@ -39,7 +39,7 @@ describe("Mob", function() {
     describe("when the victim dies", function() {
 
       beforeEach(function() {
-        mob.hp += 100;
+        mob.hp = mob.baseHP += 100;
       });
 
       it("should remove the victim from its hate list", function() {
@@ -52,7 +52,7 @@ describe("Mob", function() {
       });
 
       it("should start attacking the next person on the hate list when the first one dies", function() {
-        var otherPlayer = world.createCharacter({race: "human", class: "warrior", level: 1});
+        var otherPlayer = createWarriorPlayer();
         player.attack(mob);
         otherPlayer.attack(mob);
         world.tick();
@@ -60,6 +60,26 @@ describe("Mob", function() {
         world.tick();
         expect(mob).toBeAttacking(otherPlayer);
       });
+    });
+
+  });
+
+  describe("#receivesDamage", function() {
+    it("should reduce the mob's HP by the damage amount", function() {
+      var initialHP = mob.hp;
+      mob.receivesDamage(10, player);
+      expect(mob.hp).toEqual(initialHP - 10);
+    });
+
+    it("should add the attacker to the hate list", function() {
+      mob.receivesDamage(10, player);
+      expect(mob.hateList.has(player)).toEqual(true);
+    });
+
+    it("should work when not called with an attacker", function() { // regression{
+      expect(function() {
+        mob.receivesDamage(10);
+      }).not.toThrow();
     });
 
   });
@@ -92,6 +112,16 @@ describe("Mob", function() {
   describe("#isPlayer", function() {
     it("returns false", function() {
       expect(mob.isPlayer).toEqual(false);
+    });
+  });
+
+  describe("describe #regenTick", function() {
+    it("should regenerate the amount of HP in its hpRegenPerTick property", function() {
+      expect(mob.hpRegenPerTick()).toBeGreaterThan(0);
+      var initialHP = mob.hp;
+      mob.receivesDamage(mob.hpRegenPerTick() * 2);
+      mob.regenTick();
+      expect(mob.hp).toEqual(initialHP - mob.hpRegenPerTick());
     });
   });
 

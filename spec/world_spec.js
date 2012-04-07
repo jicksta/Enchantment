@@ -4,7 +4,7 @@ describe("World", function() {
 
   describe("#createCharacter", function() {
     it("should put the character in its starting zone", function() {
-      var character = world.createCharacter({race: "human", class: "warrior", level: 1});
+      var character = createWarriorPlayer();
       expect(character.zone.name).toEqual(world.config.races[character.race].startingZones[0].name);
     });
   });
@@ -13,7 +13,7 @@ describe("World", function() {
     it("loading of orczone", function() {
       expect(world.zones.orczone).toBeDefined();
       expect(world.zones.orczone.mobs.length).toEqual(1);
-      expect(world.zones.orczone.mobs[0].name).toEqual(world.config.mobs.orc.name);
+      expect(world.zones.orczone.mobs.first().name).toEqual(world.config.mobs.orc.name);
     });
   });
 

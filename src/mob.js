@@ -8,6 +8,7 @@
     this.zone = zone;
     this.state = "idle";
     this.hateList = new PrioritySet("id");
+    this.id = Math.random().toString();
 
     _.extend(this, params);
 
@@ -25,7 +26,7 @@
   proto.receivesDamage = function(damage, damageSource) {
     this.hp -= damage;
 
-    this.increaseHateFor(damageSource, damage / 10);
+    if(damageSource != null) this.increaseHateFor(damageSource, damage / 10);
 
     if (this.hp <= 0) {
       this.hp = 0;
@@ -54,7 +55,14 @@
     if (this.target !== mostHated) this.attack(mostHated);
   };
 
+  proto.isMob = true;
+
   proto.inspect = function() {
     return "Mob <" + this.name + ">";
+  };
+
+  proto.toString = function() {
+    return this.name;
   }
+
 })();

@@ -1,39 +1,62 @@
 var Mob = require("./mob.js").Mob,
+    Set = require("./util/id_set.js").IdSet,
     _ = require("underscore");
 
 exports.Zone = function Zone(world, zoneName) {
   this.world = world;
   this.zoneName = zoneName;
   this.attackers = {};
-  this.mobs = this._loadMobs();
+  this.fighters = new Set;
+  this._loadMobs();
 };
 
 var proto = exports.Zone.prototype;
 
 proto.tick = function(n) {
-  if(n == null) n = 1;
-  for(var i = 0; i < n; i++) {
-    _.each(this.attackers, function(attacker) {
-      if(attacker.target !== attacker) {
-        attacker.target.receivesDamage(attacker.attackDamage(), attacker);
+  var self = this;
+  if (n == null) n = 1;
+  for (var i = 0; i < n; i++) {
+    tickRegen();
+    tickAttacks();
+  }
+
+  function tickAttacks() {
+    _.each(self.attackers, function(attacker) {
+      if (attacker.target !== attacker) {
+        var dmg = attacker.attackDamage();
+        attacker.target.receivesDamage(dmg, attacker);
       }
     });
 
     // After everyone has done all the damage they're going to do, check for deaths.
-    for(var id in this.attackers) {
-      var attacker = this.attackers[id];
+    for (var id in self.attackers) {
+      var attacker = self.attackers[id];
       if (attacker.target.state === "dead") {
-        this.fighterKilledFighter(attacker, attacker.target)
+        self.fighterKilledFighter(attacker, attacker.target)
       }
       if (attacker.state !== "attacking") {
-        delete this.attackers[id];
+        delete self.attackers[id];
       }
     }
+
   }
+
+  function tickRegen() {
+    self.fighters.each(function(fighter) {
+      fighter.regenTick();
+    });
+  }
+
+};
+
+proto.playerEnters = function(player) {
+  this.fighters.add(player);
 };
 
 proto.fighterKilledFighter = function(survivor, deceased) {
   delete this.attackers[deceased.id];
+  if(!deceased.isPlayer) this.mobs.remove(deceased);
+  this.fighters.remove(deceased);
   survivor.awardKill(deceased);
 };
 
@@ -47,10 +70,13 @@ proto._zoneConfig = function() {
 
 proto._loadMobs = function() {
   var self = this;
-  return self._zoneConfig().mobs.map(function(mob) {
-    var mobType = mob.type;
+  self.mobs = new Set;
+  _.each(self._zoneConfig().mobs, function(mobReference) {
+    var mobType = mobReference.type;
     var mobParams = self.world.config.mobs[mobType];
-    return new Mob(self, mobParams);
+    var mob = new Mob(self, mobParams);
+    self.mobs.add(mob);
+    self.fighters.add(mob);
   });
 };
 

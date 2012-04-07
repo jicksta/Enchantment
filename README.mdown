@@ -8,13 +8,16 @@ RetroQuest is an attempt to rebuild the magic of EverQuest with the web technolo
 
 Next steps
 ----------
-* Initialization of game within the network server
-* Max HP / currentHP
-* Levels
-* Classes
+* Spell modifiers (Spirit of Wolf-esque spell, Invincibility, Debuffs)
+* Inventory
+* Rename character to player, and fighter to character.
+* Worn item stat modifiers
+* Ability to cast spells to do damage.
+* Use a spell modifier to remove all randomness for easier testing
 * Rolling for damage
-* Item and spell modifiers (Spirit of Wolf-esque spell)
-* Regen of HP, mana and stamina
+* Initialization of game within the network server
+* Levels
+* Respawning of mobs
 * Experience
 * Stats-based damage
 * Re-integration of physics changes
@@ -22,7 +25,9 @@ Next steps
 * Spells (duration-based actions, not tick-based)
 * UI (HP, mana, stamina chat, buffs, spell slots)
 * Can loot items from dead mob.
-* Chat system
+* Chat system (Jabber?!)
+* Zoning
+* Dying and going back to zone point
 
 
 Epics
@@ -34,3 +39,9 @@ Epics
 * Character / Account creation
 * Better content
 * Map editor for defining mob patrols, fear lines, etc
+
+
+Features (that are already implemented)
+--------
+* 3D world
+* Realtime networking

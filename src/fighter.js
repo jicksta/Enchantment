@@ -5,6 +5,7 @@ exports.Fighter.prototype = {
   DEFAULT_STATE: "default",
 
   isPlayer: false,
+  isMob: false,
 
   changeTarget: function(newTarget) {
     this.target = newTarget;
@@ -21,13 +22,19 @@ exports.Fighter.prototype = {
     if (this.weapon) {
       return this.weapon.damage;
     } else {
-      return 5;
+      return 10;
     }
   },
 
   stopAttacking: function() {
     if(this.state === "attacking") this.state = this.DEFAULT_STATE;
   },
+
+  regenTick: function() {
+    this.hp = Math.min(this.hp + this.hpRegenPerTick(), this.baseHP);
+  },
+
+  hpRegenPerTick: function() { return 1; },
 
   receivesDamage: NotImplemented,
   awardKill: NotImplemented

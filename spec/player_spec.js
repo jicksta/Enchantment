@@ -31,7 +31,7 @@ describe("Player", function() {
     });
 
     it("should have an ID", function() {
-      expect(world.createCharacter({race: "human", class: "warrior", level: 1}).id).toBeDefined();
+      expect(createWarriorPlayer().id).toBeDefined();
     });
 
     it("should have a null target", function() {
@@ -75,6 +75,31 @@ describe("Player", function() {
   describe("#isPlayer", function() {
     it("returns true", function() {
       expect(player.isPlayer).toEqual(true);
+    });
+  });
+
+  describe("#enterZone", function() {
+    it("should call playerEnters on its zone with itself as the param", function() {
+      var zone = {playerEnters: jasmine.createSpy("playerEnters")};
+      player.enterZone(zone);
+      expect(zone.playerEnters).toHaveBeenCalledWith(player);
+    });
+
+    it("should set its zone to be the given zone", function() {
+      var zone = {playerEnters: jasmine.createSpy()};
+      player.enterZone(zone);
+      expect(player.zone).toEqual(zone);
+    });
+  });
+
+
+  describe("describe #regenTick", function() {
+    it("should regenerate the amount of HP in its hpRegenPerTick property", function() {
+      expect(player.hpRegenPerTick()).toBeGreaterThan(0);
+      var initialHP = player.hp
+      player.receivesDamage(player.hpRegenPerTick() * 2);
+      player.regenTick();
+      expect(player.hp).toEqual(initialHP - player.hpRegenPerTick());
     });
   });
 

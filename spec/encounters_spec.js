@@ -3,9 +3,9 @@ describe("Encounters", function() {
 
   var player, zone, target;
   beforeEach(function() {
-    player = world.createCharacter({race: "human", class: "warrior", level: 1});
+    player = createWarriorPlayer();
     zone = world.zones.orczone;
-    target = zone.mobs[0];
+    target = zone.mobs.first();
   });
 
   // The idle state is the default state.
@@ -45,7 +45,6 @@ describe("Encounters", function() {
         world.tick();
         expect(target.hp).toEqual(initialHP - dmg);
         world.tick();
-        expect(target.hp).toEqual(initialHP - (dmg * 2));
       });
 
       it("should cause the mob to target and start attacking the player", function() {
@@ -63,31 +62,28 @@ describe("Encounters", function() {
 
     describe("two players on one mob", function() {
       it("should transition aggro to the second player when the first one dies", function() {
-        target.hp += 100;
+        target.hp = target.baseHP += 100;
 
         player.attack(target);
         world.tick();
-
-        var otherPlayer = world.createCharacter({race: "human", class: "warrior", level: 1});
+        var otherPlayer = createWarriorPlayer();
         otherPlayer.attack(target);
         world.tick();
-
         expect(target).toBeAlive();
         player.receivesDamage(player.hp);
         world.tick();
-
         expect(player).toBeDead();
         expect(target).toBeAttacking(otherPlayer);
       });
 
       it("should transition aggro when one player does more damage than another", function() {
-        target.hp += 100;
-        player.hp += 100;
+        target.hp = target.baseHP += 100;
+        player.hp = player.baseHP += 100;
 
         player.attack(target);
         world.tick(); // Player damage = 10
 
-        var otherPlayer = world.createCharacter({race: "human", class: "warrior", level: 1});
+        var otherPlayer = createWarriorPlayer();
         otherPlayer.weapon.damage *= 1.9;
         otherPlayer.attack(target);
         world.tick(); // Player damage = 20, otherPlayer = 19
@@ -121,7 +117,7 @@ describe("Encounters", function() {
     });
 
     it("should preserve the 'attacking' state if the kill awarded was not the current target", function() {
-      var otherPlayer = world.createCharacter({race: "human", class: "warrior", level: 1});
+      var otherPlayer = createWarriorPlayer();
 
       player.attack(target);
       otherPlayer.attack(target);
@@ -138,6 +134,13 @@ describe("Encounters", function() {
       }
       expect(player.target).toEqual(otherMob);
       expect(player.state).toEqual('attacking');
+    });
+
+    it("removes the killed mob from the zone's list of mobs", function() {
+      player.attack(target);
+      do { world.tick() } while(target.state !== "dead");
+      expect(zone.fighters.has(target)).toEqual(false);
+      expect(zone.mobs.has(target)).toEqual(false);
     });
 
     function kill() {

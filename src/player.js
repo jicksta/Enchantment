@@ -9,7 +9,7 @@ exports.Player = function Player(world, params) {
 
   _.extend(this, params);
 
-  this.hp = 100; // TODO: Get rid of this.
+  this.baseHP = this.hp = 100; // TODO: Get rid of this.
   this.target = null;
   this.weapon = {damage: 10};
 };
@@ -32,6 +32,17 @@ proto.receivesDamage = function(damage) {
   }
 };
 
+proto.enterZone = function(zone) {
+  this.zone = zone;
+  zone.playerEnters(this);
+};
+
 proto.isPlayer = true;
 
-proto.inspect = function() { return "Player"; };
+proto.inspect = function() {
+  return "Player";
+};
+
+proto.toString = function() {
+  return this.id;
+};

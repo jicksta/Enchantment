@@ -18,7 +18,7 @@ function setupREPL() {
   _.extend(repl.context, Engine);
 
   repl.context.world = world;
-  repl.context.player = world.createCharacter({race: "human", class: "warrior", level: 1});
+  repl.context.player = createWarriorPlayer();
 
   setInterval(function() {
     world.tick();

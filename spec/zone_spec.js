@@ -7,20 +7,36 @@ describe("Zone", function() {
     zone = world.zones.orczone;
   });
 
-  describe("loading of mobs", function() {
+  describe("initialization", function() {
 
-    it("instantiates a Mob for each mob in the world config", function() {
-      expect(zone.mobs[0] instanceof Mob).toEqual(true);
+    describe("loading of players", function() {
+      it("should have the player in its list of fighters", function() {
+
+      })
     });
 
-    it("sets up the mobs with their general params", function() {
-      var expectedName = world.config.mobs.orc.name;
-      expect(expectedName.length).toBeGreaterThan(0);
-      expect(zone.mobs[0].name).toEqual(expectedName);
-    });
+    describe("loading of mobs", function() {
 
-    it("sets the mob's zone", function() {
-      expect(zone.mobs[0].zone).toEqual(zone);
+      it("instantiates a Mob for each mob in the world config", function() {
+        expect(zone.mobs.first() instanceof Mob).toEqual(true);
+      });
+
+      it("sets up the mobs with their general params", function() {
+        var expectedName = world.config.mobs.orc.name;
+        expect(expectedName.length).toBeGreaterThan(0);
+        expect(zone.mobs.first().name).toEqual(expectedName);
+      });
+
+      it("sets the mob's zone", function() {
+        expect(zone.mobs.first().zone).toEqual(zone);
+      });
+
+      it("has the mob in its list of fighters", function() {
+        zone.mobs.each(function(mob) {
+          expect(zone.fighters.has(mob)).toEqual(true);
+        });
+      });
+
     });
 
   });
@@ -28,8 +44,8 @@ describe("Zone", function() {
   describe("when a fighter kills another fighter", function() {
 
     it("should remove the victim from the attackers list", function() {
-      var survivor = world.createCharacter({race: "human", class: "warrior", level: 1}),
-          victim = world.createCharacter({race: "human", class: "warrior", level: 1});
+      var survivor = createWarriorPlayer(),
+          victim = createWarriorPlayer();
 
       survivor.attack(victim);
       victim.attack(survivor);
@@ -40,6 +56,18 @@ describe("Zone", function() {
       expect(victim.id in zone.attackers).toEqual(false);
     });
 
+  });
+
+  describe("ticking", function() {
+    it("should regenerate players' health the tick after damage has been done", function() {
+      var player = createWarriorPlayer();
+      var halfHP = player.hp / 2;
+      player.receivesDamage(halfHP);
+      world.tick();
+      expect(player.hp).toEqual(halfHP + player.hpRegenPerTick());
+      world.tick();
+      expect(player.hp).toBeGreaterThan(halfHP);
+    });
   });
 
 });
