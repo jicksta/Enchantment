@@ -55,6 +55,7 @@ proto.characterKilledCharacter = function(survivor, deceased) {
   if(!deceased.isPlayer) this.mobs.remove(deceased);
   this.characters.remove(deceased);
   survivor.awardKill(deceased);
+  this.reportDeath(deceased, survivor);
 };
 
 proto.addAttacker = function(attacker) {
@@ -63,6 +64,15 @@ proto.addAttacker = function(attacker) {
 
 proto.reportDamage = function(message) {
   this.world.report(message);
+};
+
+// Killer is optional
+proto.reportDeath = function(deceased, killer) {
+  if(killer) {
+    this.world.report(killer + " killed " + deceased);
+  } else {
+    this.world.report(deceased + " died");
+  }
 };
 
 proto._zoneConfig = function() {

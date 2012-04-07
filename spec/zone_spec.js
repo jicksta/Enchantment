@@ -57,6 +57,18 @@ describe("Zone", function() {
       expect(victim.id in zone.attackers).toEqual(false);
     });
 
+    it("should report the death", function() {
+      var survivor = createWarriorPlayer(),
+          victim = createWarriorPlayer();
+      spyOn(world, "report");
+
+      survivor.attack(victim);
+      victim.attack(survivor);
+      world.tick();
+
+      zone.characterKilledCharacter(survivor, victim);
+      expect(world.report).toHaveBeenCalled();
+    });
   });
 
   describe("ticking", function() {
@@ -68,6 +80,14 @@ describe("Zone", function() {
       expect(player.hp).toEqual(halfHP + player.hpRegenPerTick());
       world.tick();
       expect(player.hp).toBeGreaterThan(halfHP);
+    });
+  });
+
+  describe("reporting", function() {
+    it("should report a message with the world", function() {
+      spyOn(world, "report");
+      zone.reportDeath(createWarriorPlayer());
+      expect(world.report).toHaveBeenCalledWith(jasmine.any(String));
     });
   });
 

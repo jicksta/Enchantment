@@ -42,6 +42,8 @@ Epics
 * Map editor for defining mob patrols, fear lines, etc
 
 
+NOTE: Damn! I may have referenced "world" instead of this.world in other places in the app code.
+
 Features (that are already implemented)
 --------
 * 3D world
