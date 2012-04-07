@@ -1,6 +1,8 @@
 var Character = require("./character.js").Character,
     _ = require("underscore");
 
+
+// "params" must have: class, race and level.
 exports.Player = function Player(world, params) {
   this.world = world;
   this.id = Math.random().toString();
@@ -10,13 +12,8 @@ exports.Player = function Player(world, params) {
   this.target = null;
   this.weapon = {damage: 10};
 
-  var raceParams = this.world.config.races[params.race];
-  var classParams = this.world.config.classes[params.class];
-
-  _.extend(this, params, raceParams);
-  if(classParams.hpBonus) this.baseHP += classParams.hpBonus;
-
-  this.hp = this.baseHP;
+  this._setupBaseStats(params);
+  this._resetLifeStats();
 };
 
 var proto = exports.Player.prototype = new Character;

@@ -124,21 +124,24 @@ describe("Encounters", function() {
       world.tick();
       expect(player).toBeAttacking(target);
 
-      var otherMob = new global.rq.Mob(zone, "a moss snake"); // Should be something with same or higher HP as `target`
+      var otherMob = new global.rq.Mob(zone, {class: "warrior", race: "human", level: 1}); // Should be something with same or higher HP as `target`
       player.attack(otherMob);
       expect(player.state).toEqual('attacking');
       expect(otherMob.state).not.toEqual('dead');
 
-      while (target.state != "dead") {
-        world.tick();
-      }
+      tickWhile(function() {
+        return target.state !== "dead"
+      }, world);
+
       expect(player.target).toEqual(otherMob);
       expect(player.state).toEqual('attacking');
     });
 
     it("removes the killed mob from the zone's list of mobs", function() {
       player.attack(target);
-      do { world.tick() } while(target.state !== "dead");
+      tickWhile(function() {
+        return target.state !== "dead";
+      }, world);
       expect(zone.characters.has(target)).toEqual(false);
       expect(zone.mobs.has(target)).toEqual(false);
     });

@@ -9,6 +9,7 @@ RetroQuest is an attempt to rebuild the magic of EverQuest with the web technolo
 Next steps
 ----------
 * Use GmCalculator for all stat calculations. Start doing mana and stamina.
+* Pass race, class and level into GmCalculator instead of a special object. extendWithStats()
 * Spell modifiers (Spirit of Wolf-esque spell, Invincibility, Debuffs)
 * Inventory
 * Worn item stat modifiers

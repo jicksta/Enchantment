@@ -46,6 +46,13 @@ describe("Player", function() {
       expect(player.killCount).toEqual(0);
     });
 
+    it("should have mana of -1 if its does not use mana", function() {
+      expect(player.hasMana).toEqual(false);
+      expect(player.class).toEqual("warrior");
+      expect(player.baseMana).toEqual(-1);
+      expect(player.mana).toEqual(-1);
+    });
+
   });
 
   describe("receiving damage", function() {

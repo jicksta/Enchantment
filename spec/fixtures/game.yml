@@ -6,6 +6,10 @@ races:
     baseMana: 100
     baseStamina: 200
     startingZone: "orczone"
+    playable: true
+  orc:
+    baseHP: 25
+    baseMana: 0
 
 classes:
   warrior:
@@ -26,10 +30,6 @@ mobs:
     name: "orc"
     class: "warrior"
     race: "orc"
-
-mobraces:
-  orc:
-    baseHP: 20
 
 zones:
   orczone:

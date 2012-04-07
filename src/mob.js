@@ -6,19 +6,13 @@
 
   exports.Mob = function Mob(zone, params) {
     this.zone = zone;
+    this.world = this.zone.world;
     this.state = "idle";
     this.hateList = new PrioritySet("id");
     this.id = Math.random().toString();
 
-    _.extend(this, params);
-
-    this.baseHP = 25;
-    this.baseMana = 25;
-    this.baseStamina = 50;
-
-    this.hp = this.baseHP;
-    this.mana = this.baseMana;
-    this.stamina = this.baseStamina;
+    this._setupBaseStats(params);
+    this._resetLifeStats();
   };
 
   var proto = exports.Mob.prototype = new Character;

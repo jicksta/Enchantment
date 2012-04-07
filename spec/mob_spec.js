@@ -11,6 +11,32 @@ describe("Mob", function() {
     mob = zone.mobs.first();
   });
 
+  describe("newly instantiated mob", function() {
+
+    it("should load the params", function() {
+      var mobParams = world.config.mobs.orc;
+      var mob = new Mob(zone, mobParams);
+      _.each(mobParams, function(value, key) {
+        expect(mob[key]).toEqual(value);
+      });
+    });
+
+    it("should have an attack damage", function() {
+      expect(mob.attackDamage()).toBeGreaterThan(0);
+    });
+
+    it('should have full health, mana and stamina', function() {
+      expect(mob.hp).toEqual(mob.baseHP);
+      expect(mob.mana).toEqual(mob.baseMana);
+      expect(mob.stamina).toEqual(mob.baseStamina);
+    });
+
+    it("should have its zone", function() {
+      expect(mob.zone).toEqual(world.zones.orczone);
+    });
+
+  });
+
   describe("#attack", function() {
 
     it("should set the target to be the attacked person", function() {
@@ -82,31 +108,6 @@ describe("Mob", function() {
       }).not.toThrow();
     });
 
-  });
-
-  describe("newly instantiated mob", function() {
-
-    it("should load the params", function() {
-      var mobParams = world.config.mobs.orc;
-      var mob = new Mob(zone, mobParams);
-      _.each(mobParams, function(value, key) {
-        expect(mob[key]).toEqual(value);
-      });
-    });
-
-    it("should have an attack damage", function() {
-      expect(mob.attackDamage()).toBeGreaterThan(0);
-    });
-
-    it('should have full health, mana and stamina', function() {
-      expect(mob.hp).toEqual(mob.baseHP);
-      expect(mob.mana).toEqual(mob.baseMana);
-      expect(mob.stamina).toEqual(mob.baseStamina);
-    });
-
-    it("should have its zone", function() {
-      expect(mob.zone).toEqual(world.zones.orczone);
-    })
   });
 
   describe("#isPlayer", function() {

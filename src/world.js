@@ -1,10 +1,12 @@
 var _ = require("underscore"),
+    GmCalculator = require("./gm_calculator.js").GmCalculator,
     Zone = require("./zone.js").Zone,
     Player = require("./player.js").Player,
     Set = require("./util/id_set.js").IdSet;
 
 exports.World = function World(config) {
   this.config = config;
+  this.gm = new GmCalculator(this);
   this.zones = this._loadZones();
   this.players = new Set;
 };

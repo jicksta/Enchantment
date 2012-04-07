@@ -36,6 +36,15 @@ exports.Character.prototype = {
 
   hpRegenPerTick: function() { return 1; },
 
+  _setupBaseStats: function(params) {
+    this.world.gm.baseStats(this, params);
+  },
+
+  _resetLifeStats: function() {
+    this.hp = this.baseHP;
+    this.mana = this.baseMana;
+  },
+
   receivesDamage: NotImplemented,
   awardKill: NotImplemented
 
