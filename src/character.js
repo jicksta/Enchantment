@@ -1,3 +1,4 @@
+var _ = require("underscore");
 exports.Character = function() {}
 
 exports.Character.prototype = {
@@ -37,7 +38,8 @@ exports.Character.prototype = {
   hpRegenPerTick: function() { return 1; },
 
   _setupBaseStats: function(params) {
-    this.world.gm.baseStats(this, params);
+    _.extend(this, params);
+    this.world.gm.extendWithStats(this, params.race, params.class, params.level);
   },
 
   _resetLifeStats: function() {

@@ -8,11 +8,11 @@
 
   var proto = exports.GmCalculator.prototype;
 
-  proto.baseStats = function(obj, params) {
-    var klass = this.world.config.classes[params.class];
-    var race = this.world.config.races[params.race];
+  proto.extendWithStats = function(obj, raceName, className, level) {
+    var race = this.world.config.races[raceName];
+    var klass = this.world.config.classes[className];
 
-    _.extend(obj, params, klass, race);
+    _.extend(obj, klass, race);
 
     obj.baseMana = klass.hasMana ? race.baseMana : -1;
   };
