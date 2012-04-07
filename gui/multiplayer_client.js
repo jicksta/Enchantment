@@ -24,7 +24,7 @@
   });
 
   ns.socket.on("update", function(playerData) {
-    $.extend(ns.otherPlayers[playerData.id], playerData);
+    _.extend(ns.otherPlayers[playerData.id], playerData);
   });
 
   ns.socket.on("left", function(playerID) {
