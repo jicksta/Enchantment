@@ -10,9 +10,9 @@ describe("GmCalculator", function() {
 
   describe("calculating base stats", function() {
 
-    it("should combine the baseHP of the race and the hpBonus of the class", function() {
+    it("should combine the baseHP of the race", function() {
       var base = calc.baseStats({race: "human", class: "warrior", level: 1});
-      expect(base.baseHP).toEqual(config.races.human.baseHP + config.classes.warrior.hpBonus);
+      expect(base.baseHP).toEqual(config.races.human.baseHP);
     });
 
   });
@@ -25,7 +25,7 @@ describe("GmCalculator", function() {
 
     it("should combine the baseMana of the race and the manaBonus of the class", function() {
       var base = calc.baseStats({race: "human", class: "caster", level: 1});
-      expect(base.baseMana).toEqual(config.races.human.baseMana + config.classes.caster.manaBonus);
+      expect(base.baseMana).toEqual(config.races.human.baseMana);
     });
   });
 

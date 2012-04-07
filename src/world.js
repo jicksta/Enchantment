@@ -16,7 +16,8 @@ exports.World.prototype = {
 
   createCharacter: function(params) {
     var character = new Player(this, params);
-    var startingZoneName = this.config.races[params.race].startingZones[0];
+
+    var startingZoneName = this.config.races[params.race].startingZone;
     var zone = this.zones[startingZoneName];
     character.enterZone(zone);
     this.characters.push(character);

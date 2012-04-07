@@ -7,11 +7,16 @@ exports.Player = function Player(world, params) {
   this.state = this.DEFAULT_STATE;
   this.killCount = 0;
 
-  _.extend(this, params);
-
-  this.baseHP = this.hp = 100; // TODO: Get rid of this.
   this.target = null;
   this.weapon = {damage: 10};
+
+  var raceParams = this.world.config.races[params.race];
+  var classParams = this.world.config.classes[params.class];
+
+  _.extend(this, params, raceParams);
+  if(classParams.hpBonus) this.baseHP += classParams.hpBonus;
+
+  this.hp = this.baseHP;
 };
 
 var proto = exports.Player.prototype = new Fighter;

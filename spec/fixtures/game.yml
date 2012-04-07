@@ -2,15 +2,14 @@ starting_level: 1
 
 races:
   human:
-    baseHP: 20
-    baseMana: 20
-    baseStamina: 50
-    startingZones: ["orczone"]
+    baseHP: 95
+    baseMana: 100
+    baseStamina: 200
+    startingZone: "orczone"
 
 classes:
   warrior:
     hasMana: false
-    hpBonus: 5
   caster:
     hasMana: true
     manaBonus: 5
@@ -29,7 +28,8 @@ mobs:
     race: "orc"
 
 mobraces:
-  orc: {}
+  orc:
+    baseHP: 20
 
 zones:
   orczone:

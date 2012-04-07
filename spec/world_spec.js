@@ -5,8 +5,9 @@ describe("World", function() {
   describe("#createCharacter", function() {
     it("should put the character in its starting zone", function() {
       var character = createWarriorPlayer();
-      expect(character.zone.name).toEqual(world.config.races[character.race].startingZones[0].name);
+      expect(character.zone.name).toEqual(world.config.races[character.race].startingZone.name);
     });
+
   });
 
   describe("loading from a config", function() {

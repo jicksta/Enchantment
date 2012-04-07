@@ -8,6 +8,7 @@ RetroQuest is an attempt to rebuild the magic of EverQuest with the web technolo
 
 Next steps
 ----------
+* Use GmCalculator for all stat calculations. Start doing mana and stamina.
 * Spell modifiers (Spirit of Wolf-esque spell, Invincibility, Debuffs)
 * Inventory
 * Rename character to player, and fighter to character.

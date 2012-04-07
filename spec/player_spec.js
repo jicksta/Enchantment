@@ -16,6 +16,10 @@ describe("Player", function() {
       })
     });
 
+    it("should load its base stats from the config", function() {
+      expect(player.baseHP).toBeGreaterThan(0);
+    });
+
     it("should create a character a single weapon with damage", function() {
       expect(player.weapon).toBeDefined();
       expect(player.weapon.damage).toBeGreaterThan(0);
@@ -41,7 +45,6 @@ describe("Player", function() {
     it("should have a kill count of 0", function() {
       expect(player.killCount).toEqual(0);
     });
-
 
   });
 

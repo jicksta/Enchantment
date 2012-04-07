@@ -9,8 +9,8 @@
     var race = this.config.races[params.race];
 
     return {
-      baseHP: race.baseHP + klass.hpBonus,
-      baseMana: klass.hasMana ? (race.baseMana + klass.manaBonus) : -1
+      baseHP: race.baseHP,
+      baseMana: klass.hasMana ? race.baseMana : -1
     };
   };
 
