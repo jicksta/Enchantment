@@ -38,6 +38,13 @@ describe("Zone", function() {
         });
       });
 
+      it("puts the mobs at their spawnpoint", function() {
+        var spawnpoint = world.config.zones.orczone.mobs[0].spawnpoint;
+        var mob = zone.mobs.first();
+        expect(mob.x).toEqual(spawnpoint.x);
+        expect(mob.z).toEqual(spawnpoint.z);
+      });
+
     });
 
   });

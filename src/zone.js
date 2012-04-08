@@ -1,12 +1,12 @@
 var Mob = require("./mob.js").Mob,
-    Set = require("./util/id_set.js").IdSet,
+    IdSet = require("./util/id_set.js").IdSet,
     _ = require("underscore");
 
 exports.Zone = function Zone(world, zoneName) {
   this.world = world;
   this.zoneName = zoneName;
   this.attackers = {};
-  this.characters = new Set;
+  this.characters = new IdSet;
   this._loadMobs();
 };
 
@@ -81,11 +81,13 @@ proto._zoneConfig = function() {
 
 proto._loadMobs = function() {
   var self = this;
-  self.mobs = new Set;
+  self.mobs = new IdSet;
   _.each(self._zoneConfig().mobs, function(mobReference) {
     var mobType = mobReference.type;
     var mobParams = self.world.config.mobs[mobType];
     var mob = new Mob(self, mobParams);
+    var spawnpoint = mobReference.spawnpoint;
+    mob.setPosition(spawnpoint.x, spawnpoint.z);
     self.mobs.add(mob);
     self.characters.add(mob);
   });

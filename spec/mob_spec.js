@@ -102,9 +102,10 @@ describe("Mob", function() {
     });
 
     it("should work when not called with an attacker", function() { // regression{
-      expect(function() {
-        mob.receivesDamage(10);
-      }).not.toThrow();
+      expect(
+          function() {
+            mob.receivesDamage(10);
+          }).not.toThrow();
     });
 
   });
@@ -122,6 +123,26 @@ describe("Mob", function() {
       mob.receivesDamage(mob.hpRegenPerTick() * 2);
       mob.regenTick();
       expect(mob.hp).toEqual(initialHP - mob.hpRegenPerTick());
+    });
+  });
+
+  describe("setPosition", function() {
+    it("should set the x and z positions of the mob", function() {
+      var x = -2, z = -6;
+      mob.setPosition(x, z);
+      expect(mob.x).toEqual(x);
+      expect(mob.z).toEqual(z);
+    });
+  });
+
+  describe("patrolPosition", function() {
+    it("should return different positions at different times", function() {
+      var now = Date.now();
+      mob.startPatrol();
+      var firstPatrolPosition = mob.patrolPosition(now);
+      var subsequentPosition = mob.patrolPosition(now + 1111);
+      expect(subsequentPosition.x).not.toEqual(firstPatrolPosition.x);
+      expect(subsequentPosition.z).not.toEqual(firstPatrolPosition.z);
     });
   });
 

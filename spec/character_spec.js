@@ -19,7 +19,9 @@ describe("Character behavior", function() {
   }
 
   describe("on Player", function() {
-    shared(createWarriorPlayer);
+    shared(function() {
+      return createWarriorPlayer();
+    });
   });
 
   describe("on Mob", function() {

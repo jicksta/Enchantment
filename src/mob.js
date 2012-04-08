@@ -30,6 +30,24 @@
     }
   };
 
+  proto.setPosition = function(x, z) {
+    this.x = x;
+    this.z = z;
+  };
+
+  proto.startPatrol = function () {
+    this._patrolStartTime = Date.now();
+  };
+
+  proto.patrolPosition = function(time) {
+    if(this._patrolStartTime != null) {
+      return {
+        x: Math.sin(time - this._patrolStartTime),
+        z: Math.cos(time - this._patrolStartTime)
+      };
+    }
+  };
+
   proto.increaseHateFor = function(damageSource, amount) {
     if (this.hateList.has(damageSource)) {
       var previousHate = this.hateList.priorityOf(damageSource);
