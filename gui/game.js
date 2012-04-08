@@ -1,71 +1,108 @@
 var E = {};
 
+
+function PhysicsEngine(options) {
+  var self = this;
+
+  self.worker = new Worker("physics.js");
+  self.worker.addEventListener("message", function() {
+    self._messageReceived.apply(self, arguments);
+  });
+  self._send("init", {ammo:"/vendor/ammo.36200f52b3383deba7f3a4d7f57ac5870d0e1895.js"});
+  self.state = null;
+  self.ontick = options.ontick;
+}
+
+PhysicsEngine.prototype._send = function(action, payload) {
+  this.worker.postMessage({action:action, payload:payload});
+};
+
+PhysicsEngine.prototype._messageReceived = function(e) {
+  if (e.data.action == "debug") {
+    console.debug("(WORKER)", e.data.payload);
+  } else if (e.data.action === "tick") {
+    this.state = e.data.payload;
+    if (typeof this.ontick === "function") this.ontick();
+  }
+};
+
+PhysicsEngine.prototype.buildTriangleMesh = function(triangles) {
+  this._send("buildTriangleMesh", {triangles:triangles});
+};
+
+PhysicsEngine.prototype.update = function(state) {
+  this.state = null;
+  this._send("update", state);
+};
+
+
 (function(ns) {
 
-  var WIDTH = document.body.clientWidth,
-      HEIGHT = document.body.clientHeight;
+  var VIEW_WIDTH = document.body.clientWidth,
+      VIEW_HEIGHT = document.body.clientHeight;
 
   var domElement = document.getElementById("container");
 
   var clock = new THREE.Clock;
-  var scene = new THREE.Scene;
+  var scene = createScene();
 
+  var stats = createStats();
   var camera = createCamera();
-  var physics = setupPhysics();
-  var player = setupPlayer();
+  var physics = setupPhysics(function() {
+    requestAnimationFrame(render);
+  });
 
   setupLighting();
+  setupControls();
 
   var renderer = createRenderer();
 
-  loadCollada("models/building.dae", 0.002, delayRenderFn(500));
+  loadCollada("models/bigmap.dae", 4, function() {
+    physics.update(viewState());
+  });
+
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   function render() {
-    requestAnimationFrame(render);
-    var timeDelta = clock.getDelta();
-    physics.integrate(timeDelta);
-    updateCameraFromPhysics();
-    updatePhysicalMeshes();
-    updateOtherPlayers();
+    moveCamera();
+    sendMovementData();
     renderer.render(scene, camera);
+    physics.update(viewState());
+    updateOtherPlayers();
+    stats.update();
   }
 
-  // This is useful for passing the returned function as a callback that will start the render loop at a certain number
-  // of milliseconds in the future. This might be useful or even necessary if you depend on physics immediately.
-  // Browsers tend to be briefly laggy immediately after page load while it JITs all the JavaScript. Collision
-  // detection may fail during this laggy period if the lag lasts longer than the time it takes the object to fall/move
-  // through another.
-  function delayRenderFn(ms) {
-    return function() {
-      setTimeout(render, ms);
-    }
+  function createScene() {
+    var scene = new THREE.Scene;
+    scene.fog = new THREE.FogExp2(0xaaaaaa, 0.00055);
+    return scene;
+  }
+
+  function moveCamera() {
+    var position = physics.state.agent;
+    camera.position.set(position.x, position.y, position.z);
   }
 
   function createCamera() {
-    var camera = new THREE.PerspectiveCamera(camera, WIDTH / HEIGHT, 1, 20000);
-    camera.position.set(-4, 1, 0);
+    var camera = new THREE.PerspectiveCamera(camera, VIEW_WIDTH / VIEW_HEIGHT, 0.1, 20000);
+    camera.position.set(0, 1, 0);
     scene.add(camera);
     return camera;
   }
 
-  function setupPhysics() {
-    physics = jiglib.PhysicsSystem.getInstance();
-    physics.rigidBodies = [];
-    physics.setCollisionSystem(true);
-    physics.setSolverType("FAST");
-    physics.setGravity(new Vector3D(0, -9.8, 0, 0));
-    return physics;
+  function setupPhysics(fn) {
+    return new PhysicsEngine({ontick:fn});
   }
 
   function setupLighting() {
-    var light = new THREE.PointLight(0x0020BB, 10, 50);
-    light.position.set(5, 5, 5);
-    scene.add(light);
+    var ambientLight = new THREE.PointLight(0xFFFFFF, 1, 25000);
+    ambientLight.position.y = 5;
+    scene.add(ambientLight);
   }
 
   function createRenderer() {
-    renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.setSize(WIDTH, HEIGHT);
+    renderer = new THREE.WebGLRenderer({antialias:true});
+    renderer.setSize(VIEW_WIDTH, VIEW_HEIGHT);
     domElement.appendChild(renderer.domElement);
     return renderer;
   }
@@ -78,105 +115,67 @@ var E = {};
       collada.scene.updateMatrix();
       scene.add(collada.scene);
 
-      recursivelyImportMeshes(collada.scene);
-      function recursivelyImportMeshes(obj) {
+      recursivelyPhysicalizeMeshes(collada.scene);
+      function recursivelyPhysicalizeMeshes(obj) {
         if ("geometry" in obj) {
-          var skin = {vertices: [], indices: []};
-
+          // We use this array to create the triangles with actual vectors instead of indices
+          var physicalMeshVertices = [];
           obj.geometry.vertices.forEach(function(meshVertex) {
             // Have to find the absolute position of each vertex irrespective of their parents' transformations.
             var worldVertex = obj.matrixWorld.multiplyVector3(meshVertex.position.clone());
-            var physicalVert = new Vector3D(worldVertex.x, worldVertex.y, worldVertex.z, 0).scaleBy(scale);
-            skin.vertices.push(physicalVert);
-          });
-          obj.geometry.faces.forEach(function(face) {
-            if (face instanceof THREE.Face3) {
-              skin.indices.push({i0: face.a, i1: face.b, i2: face.c});
-            } else if (face instanceof THREE.Face4) {
-              // Must convert a four-vertex face into two three-vertex faces.
-              skin.indices.push({i0: face.a, i1: face.b, i2: face.d});
-              skin.indices.push({i0: face.b, i1: face.c, i2: face.d});
-            }
+            var physicalVertex = [worldVertex.x * scale, worldVertex.y * scale, worldVertex.z * scale];
+            physicalMeshVertices.push(physicalVertex);
           });
 
-          var position = new Vector3D(obj.position.x, obj.position.y, obj.position.z, 0);
-          var rotation = new jiglib.Matrix3D;
-          obj.rigidBody = new jiglib.JTriangleMesh(skin, position, rotation, 200, 5);
-          obj.rigidBody.set_friction(1);
-          physics.addBody(obj.rigidBody);
-          physics.rigidBodies.push({body: obj.rigidBody, mesh: obj});
+          var triangles = [];
+          obj.geometry.faces.forEach(function(face) {
+            if (face instanceof THREE.Face3) {
+              triangles.push({
+                a:physicalMeshVertices[face.a],
+                b:physicalMeshVertices[face.b],
+                c:physicalMeshVertices[face.c]
+              });
+            } else if (face instanceof THREE.Face4) {
+              // Must convert a four-vertex face into two three-vertex faces.
+              triangles.push({
+                a:physicalMeshVertices[face.a],
+                b:physicalMeshVertices[face.b],
+                c:physicalMeshVertices[face.d]
+              });
+              triangles.push({
+                a:physicalMeshVertices[face.b],
+                b:physicalMeshVertices[face.c],
+                c:physicalMeshVertices[face.d]
+              });
+            }
+          });
+          physics.buildTriangleMesh(triangles);
         }
-        obj.children.forEach(recursivelyImportMeshes);
+        obj.children.forEach(recursivelyPhysicalizeMeshes);
       }
 
       callback();
     });
   }
 
-  function updatePhysicalMeshes() {
-    physics.rigidBodies.forEach(function(obj) {
-      var currentState = obj.body.get_currentState();
-      var currentPosition = currentState.position;
-      var currentOrientation = currentState.orientation.get_rawData();
+  var ACTIVE_KEYS = {};
 
-      var transformation = new THREE.Matrix4;
-      transformation.setTranslation(currentPosition.x, currentPosition.y, currentPosition.z);
-      var rotation = THREE.Matrix4.prototype.set.apply(new THREE.Matrix4, currentOrientation);
-      transformation.multiplySelf(rotation);
-
-      obj.mesh.matrix = transformation;
-      obj.mesh.matrixWorldNeedsUpdate = true;
-    });
-  }
-
-  var PRESSED_KEYS = {};
-
-  function setupPlayer() {
-    var player = new jiglib.JBox(null, 1, 1, 1.5);
-    player.moveTo(new Vector3D(0, 15, 0, 0));
-    player.set_friction(3);
-    player.set_mass(100);
-    physics.addBody(player);
-
+  function setupControls() {
     document.addEventListener('keydown', function(e) {
-      PRESSED_KEYS[e.which] = true;
+      ACTIVE_KEYS[e.which] = true;
     }, false);
     document.addEventListener('keyup', function(e) {
-      delete PRESSED_KEYS[e.which]
+      delete ACTIVE_KEYS[e.which]
     }, false);
-
-    return player;
   }
 
-  function updateCameraFromPhysics() {
-    camera.position.set(player.get_x(), player.get_y(), player.get_z());
-
-    if (39 in PRESSED_KEYS) { // right
-      camera.rotation.y -= 0.07;
-    } else if(37 in PRESSED_KEYS) { // left
-      camera.rotation.y += 0.07;
-    } else if((38 in PRESSED_KEYS) || (40 in PRESSED_KEYS)) { // forward & back
-      var isMovingForward = 38 in PRESSED_KEYS;
-      var movementSpeeds = isMovingForward ? -4 : 3;
-
-      var cameraRotation = new THREE.Matrix4().extractRotation(camera.matrixWorld);
-      var velocityVector = new THREE.Vector3(0, 0, movementSpeeds);
-      cameraRotation.multiplyVector3(velocityVector);
-
-      var currentVelocityY = player.get_currentState().linVelocity.y;
-      player.setLineVelocity(new Vector3D(velocityVector.x, currentVelocityY, velocityVector.z, 0));
-    } else {
-      return;
-    }
-    sendMovementData();
-  }
 
   var playerMeshes = {};
 
   ns.otherPlayerJoined = function(playerID) {
     var mesh = new THREE.Mesh(
         new THREE.CubeGeometry(1, 1, 1),
-        new THREE.MeshLambertMaterial({color: 0xFFFF00})
+        new THREE.MeshLambertMaterial({color:0xFFFF00})
     );
     scene.add(mesh);
     playerMeshes[playerID] = mesh;
@@ -188,23 +187,23 @@ var E = {};
   };
 
   function sendMovementData() {
-    var playerState = player.get_currentState();
+    var playerState = physics.state.agent;
 
     var rotation = new THREE.Matrix4().extractRotation(camera.matrixWorld);
     var rotationY = new THREE.Vector3().getRotationFromMatrix(rotation).y;
 
     ns.sendUpdate({
-      id: ns.remotePlayerID,
-      x: playerState.position.x,
-      y: playerState.position.y,
-      z: playerState.position.z,
-      rotation: rotationY
+      id:ns.remotePlayerID,
+      x:playerState.x,
+      y:playerState.y,
+      z:playerState.z,
+      rotation:rotationY
     });
   }
 
   function updateOtherPlayers() {
-    for(var playerID in ns.otherPlayers) {
-      if(ns.otherPlayers.hasOwnProperty(playerID)) {
+    for (var playerID in ns.otherPlayers) {
+      if (ns.otherPlayers.hasOwnProperty(playerID)) {
         var otherPlayerData = ns.otherPlayers[playerID];
         var mesh = playerMeshes[playerID];
         mesh.position = new THREE.Vector3(otherPlayerData.x, otherPlayerData.y, otherPlayerData.z);
@@ -212,5 +211,43 @@ var E = {};
       }
     }
   }
+
+  function viewState() {
+    var state = {
+      timeDelta:clock.getDelta(),
+      rotation:camera.rotation.y
+    };
+
+    var left, forward, right, backward;
+    if (37 in ACTIVE_KEYS) left = true;
+    if (38 in ACTIVE_KEYS) forward = true;
+    if (39 in ACTIVE_KEYS) right = true;
+    if (40 in ACTIVE_KEYS) backward = true;
+
+    if (right) {
+      camera.rotation.y -= 0.07;
+    } else if (left) {
+      camera.rotation.y += 0.07;
+    } else if (forward || backward) {
+      // var movementSpeeds = forward ? -12 : 10;
+      var movementSpeeds = forward ? -62 : 10;
+      var cameraRotation = new THREE.Matrix4().extractRotation(camera.matrixWorld);
+      var velocityVector = new THREE.Vector3(0, 0, movementSpeeds);
+      cameraRotation.multiplyVector3(velocityVector);
+
+      state.vector = {x:velocityVector.x, y:velocityVector.y, z:velocityVector.z};
+    }
+
+    return state;
+  }
+
+  function createStats() {
+    stats = new Stats();
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.top = '0px';
+    document.body.appendChild(stats.domElement);
+    return stats;
+  }
+
 
 })(E);
